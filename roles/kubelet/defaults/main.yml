@@ -32,6 +32,9 @@ kubelet_checksums:
     1.28.13: 9b9cc3a19551ade6f3d98ad3acf0a2b65a27ef575bd089f115f8bb80791f3900
     1.29.12: 45475d908f6c44bfbf994fec91a4d5ceebf41d93c9f3867e687b2fa67b57b5b0
     1.30.8: 7b5191dfed6a27faadefebdc4a3b602b9a76adfc58fd04c50307f1377eabc590
+    1.31.11: 7bdace3eb4c7a6d6b9cf3f9e84e5972b2885bf5bc20a92361ca527e5c228542f
+    1.32.7: 7ab96898436475640cbd416b2446f33aba1c2cb62dae876302ff7775d850041c
+    1.33.3: 37f9093ed2b4669cccf5474718e43ec412833e1267c84b01e662df2c4e5d7aaa
   arm64:
     1.19.16: 6e51cc1f16259b1016858f32bd48f44929b8330a26eb4da26929907872ab116f
     1.20.15: 8e3f08018fb66ee8b01d468779dc88608ce86f7a8bada85b5c5ddaae0280aeca
@@ -51,6 +54,9 @@ kubelet_checksums:
     1.28.13: e1c222cfe7ba457e0b3dc54bbe6149231586e2031e4e0ffddd6e34836e80acea
     1.29.12: 92237be83840bf8dd2318cb281ce309e907e0b665cac6b7629a5fa43a11ae606
     1.30.8: fdda0047c8c6a59956db72c781705eb705018d00ba594afffdb15ef630f81e28
+    1.31.11: 3a0e07fd72709736cd85ce64a2f5505b2bb085fe697417b96ff249febd5357b1
+    1.32.7: b862a8d550875924c8abed6c15ba22564f7e232c239aa6a2e88caf069a0ab548
+    1.33.3: 3f69bb32debfaf25fce91aa5e7181e1e32f3550f3257b93c17dfb37bed621a9c
 
 kubelet_download_url: "https://cdn.dl.k8s.io/release/v{{ kubelet_version }}/bin/{{ ansible_facts['system'] | lower }}/{{ download_artifact_goarch }}/kubelet" # noqa: yaml[line-length]
 kubelet_download_dest: /usr/bin/kubelet
