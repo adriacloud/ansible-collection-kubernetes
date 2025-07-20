@@ -12,3 +12,7 @@ setup and installed in your environment by running these commands:
 ```console
 pre-commit install --hook-type commit-msg
 ````
+
+## Documentation
+
+For documentation on collection, please check [docs](docs/README.md)
