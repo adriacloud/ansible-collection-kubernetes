@@ -28,7 +28,6 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - 1.30.8
           - 1.31.11
           - 1.32.7
           - 1.33.3
@@ -67,8 +66,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - old_version: 1.30.8
-            version: 1.31.11
           - old_version: 1.31.11
             version: 1.32.7
           - old_version: 1.32.7
