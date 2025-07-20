@@ -12,12 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-- name: Remove kubernetes repository
-  ansible.builtin.apt_repository:
-    repo: "{{ kubernetes_repository_apt }}"
-    state: absent
-  when: ansible_facts['os_family'] in ['Debian']
-
 - name: Setup control plane
   when: inventory_hostname in groups[kubernetes_control_plane_group]
   ansible.builtin.include_tasks: control-plane.yml
