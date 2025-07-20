@@ -16,5 +16,5 @@
   hosts: all
   become: true
   roles:
-    - vexxhost.kubernetes.cert_manager
-    - vexxhost.kubernetes.cluster_api
+    - adriacloud.kubernetes.cert_manager
+    - adriacloud.kubernetes.cluster_api

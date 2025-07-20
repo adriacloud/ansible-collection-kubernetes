@@ -19,8 +19,8 @@ _cert_manager_helm_values:
       namespace: "{{ cert_manager_helm_release_namespace }}"
   featureGates: AdditionalCertificateOutputFormats=true
   image:
-    repository: "{{ cert_manager_image_controller | vexxhost.kubernetes.docker_image('name') }}"
-    tag: "{{ cert_manager_image_controller | vexxhost.kubernetes.docker_image('tag') }}"
+    repository: "{{ cert_manager_image_controller | adriacloud.kubernetes.docker_image('name') }}"
+    tag: "{{ cert_manager_image_controller | adriacloud.kubernetes.docker_image('tag') }}"
   volumes:
     - name: etc-ssl-certs
       hostPath:
@@ -35,19 +35,19 @@ _cert_manager_helm_values:
       - --feature-gates=AdditionalCertificateOutputFormats=true
     nodeSelector: "{{ cert_manager_node_selector }}"
     image:
-      repository: "{{ cert_manager_image_webhook | vexxhost.kubernetes.docker_image('name') }}"
-      tag: "{{ cert_manager_image_webhook | vexxhost.kubernetes.docker_image('tag') }}"
+      repository: "{{ cert_manager_image_webhook | adriacloud.kubernetes.docker_image('name') }}"
+      tag: "{{ cert_manager_image_webhook | adriacloud.kubernetes.docker_image('tag') }}"
   cainjector:
     nodeSelector: "{{ cert_manager_node_selector }}"
     image:
-      repository: "{{ cert_manager_image_cainjector | vexxhost.kubernetes.docker_image('name') }}"
-      tag: "{{ cert_manager_image_cainjector | vexxhost.kubernetes.docker_image('tag') }}"
+      repository: "{{ cert_manager_image_cainjector | adriacloud.kubernetes.docker_image('name') }}"
+      tag: "{{ cert_manager_image_cainjector | adriacloud.kubernetes.docker_image('tag') }}"
   startupapicheck:
     nodeSelector: "{{ cert_manager_node_selector }}"
     image:
-      repository: "{{ cert_manager_image_cli | vexxhost.kubernetes.docker_image('name') }}"
-      tag: "{{ cert_manager_image_cli | vexxhost.kubernetes.docker_image('tag') }}"
+      repository: "{{ cert_manager_image_cli | adriacloud.kubernetes.docker_image('name') }}"
+      tag: "{{ cert_manager_image_cli | adriacloud.kubernetes.docker_image('tag') }}"
   acmesolver:
     image:
-      repository: "{{ cert_manager_image_acmesolver | vexxhost.kubernetes.docker_image('name') }}"
-      tag: "{{ cert_manager_image_acmesolver | vexxhost.kubernetes.docker_image('tag') }}"
+      repository: "{{ cert_manager_image_acmesolver | adriacloud.kubernetes.docker_image('name') }}"
+      tag: "{{ cert_manager_image_acmesolver | adriacloud.kubernetes.docker_image('tag') }}"

@@ -10,7 +10,7 @@
     group: root
 
 - name: Copy over all provider configuration to the remote system
-  vexxhost.kubernetes.multi_copy:
+  adriacloud.kubernetes.multi_copy:
     src: "{{ role_path }}/files/providers"
     dest: "{{ cluster_api_provider_path }}"
     mode: "0755"

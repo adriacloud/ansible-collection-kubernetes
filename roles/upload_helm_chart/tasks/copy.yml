@@ -24,7 +24,7 @@
         group: root
 
     - name: Upload helm chart with multi_copy
-      vexxhost.kubernetes.multi_copy:
+      adriacloud.kubernetes.multi_copy:
         src: "{{ upload_helm_chart_src }}"
         dest: "{{ upload_helm_chart_dest }}"
         owner: root

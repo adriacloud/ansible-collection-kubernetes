@@ -28,7 +28,7 @@
 
 - name: Upgrade & restart Kubelet node for upgrade (if needed)
   throttle: 1
-  vexxhost.kubernetes.kubeadm_upgrade_node:
+  adriacloud.kubernetes.kubeadm_upgrade_node:
     api_endpoint: "https://{{ kubernetes_hostname }}:6443"
     node: "{{ kubelet_hostname }}"
     version: "{{ kubernetes_version }}"
