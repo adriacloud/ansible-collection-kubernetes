@@ -29,7 +29,9 @@ jobs:
       matrix:
         version:
           - 1.30.8
-          - 1.31.1
+          - 1.31.11
+          - 1.32.7
+          - 1.33.3
         distro:
           - rockylinux10
           - ubuntu2404
@@ -65,10 +67,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - old_version: 1.29.12
-            version: 1.30.8
-          # - old_version: 1.30.8
-          #   version: 1.31.1
+          - old_version: 1.30.8
+            version: 1.31.11
+          - old_version: 1.31.11
+            version: 1.32.7
+          - old_version: 1.32.7
+            version: 1.33.3
+
     steps:
       - name: Checkout project
         uses: actions/checkout@v3
