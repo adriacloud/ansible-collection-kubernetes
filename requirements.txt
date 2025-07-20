@@ -1,4 +1,4 @@
-ansible-core
+ansible-core<2.19
 docker-image-py
 jmespath
 molecule<=24.9.0
