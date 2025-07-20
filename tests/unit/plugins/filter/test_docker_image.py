@@ -13,7 +13,7 @@
 # under the License.
 
 import pytest
-from ansible_collections.vexxhost.kubernetes.plugins.filter.docker_image import (
+from ansible_collections.adriacloud.kubernetes.plugins.filter.docker_image import (
     docker_image,
 )
 
@@ -21,11 +21,6 @@ from ansible_collections.vexxhost.kubernetes.plugins.filter.docker_image import 
 @pytest.mark.parametrize(
     "test_input,expected",
     [
-        ("quay.io/vexxhost/glance:zed", "quay.io/vexxhost/glance:zed"),
-        (
-            "us-docker.pkg.dev/vexxhost-infra/openstack/heat:wallaby",
-            "us-docker.pkg.dev/vexxhost-infra/openstack/heat:wallaby",
-        ),
         (
             "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0",
             "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0",
@@ -44,11 +39,6 @@ def test_docker_image_ref(test_input, expected):
 @pytest.mark.parametrize(
     "test_input,expected",
     [
-        ("quay.io/vexxhost/glance:zed", "quay.io/vexxhost/glance"),
-        (
-            "us-docker.pkg.dev/vexxhost-infra/openstack/heat:wallaby",
-            "us-docker.pkg.dev/vexxhost-infra/openstack/heat",
-        ),
         (
             "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0",
             "k8s.gcr.io/sig-storage/csi-snapshotter",
@@ -67,11 +57,6 @@ def test_docker_image_name(test_input, expected):
 @pytest.mark.parametrize(
     "test_input,expected",
     [
-        ("quay.io/vexxhost/glance:zed", "quay.io"),
-        (
-            "us-docker.pkg.dev/vexxhost-infra/openstack/heat:wallaby",
-            "us-docker.pkg.dev",
-        ),
         (
             "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0",
             "k8s.gcr.io",
@@ -90,11 +75,6 @@ def test_docker_image_domain(test_input, expected):
 @pytest.mark.parametrize(
     "test_input,expected",
     [
-        ("quay.io/vexxhost/glance:zed", "vexxhost/glance"),
-        (
-            "us-docker.pkg.dev/vexxhost-infra/openstack/heat:wallaby",
-            "vexxhost-infra/openstack/heat",
-        ),
         (
             "k8s.gcr.io/sig-storage/csi-snapshotter:v4.2.0",
             "sig-storage/csi-snapshotter",
@@ -113,11 +93,6 @@ def test_docker_image_path(test_input, expected):
 @pytest.mark.parametrize(
     "test_input,expected",
     [
-        ("quay.io/vexxhost/glance:zed", "quay.io/vexxhost"),
-        (
-            "us-docker.pkg.dev/vexxhost-infra/openstack/heat:wallaby",
-            "us-docker.pkg.dev/vexxhost-infra/openstack",
-        ),
         (
             "registry.k8s.io/kube-apiserver:v1.22.0",
             "registry.k8s.io",

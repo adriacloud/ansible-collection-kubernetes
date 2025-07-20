@@ -1,10 +1,10 @@
 dependencies:
-  - role: vexxhost.kubernetes.upload_helm_chart
+  - role: adriacloud.kubernetes.upload_helm_chart
     vars:
       # with rsync
       upload_helm_chart_src: "{{ test_relative_path }}"
       upload_helm_chart_dest: /usr/local/src/chart-one
-  - role: vexxhost.kubernetes.upload_helm_chart
+  - role: adriacloud.kubernetes.upload_helm_chart
     vars:
       # with multi_copy
       upload_helm_chart_src: "{{ test_relative_path }}"

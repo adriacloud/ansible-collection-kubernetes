@@ -16,4 +16,4 @@
   hosts: all
   become: true
   roles:
-    - vexxhost.kubernetes.helm
+    - adriacloud.kubernetes.helm

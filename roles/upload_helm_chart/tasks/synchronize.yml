@@ -16,7 +16,7 @@
   run_once: true
   # NOTE(mnaser): https://github.com/ansible-collections/ansible.posix/issues/381
   #               https://github.com/ansible-collections/ansible.posix/pull/433
-  vexxhost.kubernetes.synchronize:
+  adriacloud.kubernetes.synchronize:
     src: "{{ upload_helm_chart_src }}"
     dest: "{{ upload_helm_chart_dest }}"
     archive: false

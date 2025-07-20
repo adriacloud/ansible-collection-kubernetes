@@ -18,8 +18,8 @@
   hosts: all
   become: true
   roles:
-    - role: vexxhost.kubernetes.cert_manager
-    - role: vexxhost.kubernetes.cluster_api
+    - role: adriacloud.kubernetes.cert_manager
+    - role: adriacloud.kubernetes.cluster_api
       vars:
         clusterctl_version: 1.6.0
         cluster_api_version: 1.6.0
