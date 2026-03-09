@@ -19,7 +19,7 @@ driver:
 platforms:
   - &instance_config
     name: k8s-${MOLECULE_SCENARIO_NAME}-1
-    image: geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2204}-ansible:latest
+    image: geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2404}-ansible:latest
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     privileged: true
     cgroupns_mode: host
@@ -48,13 +48,13 @@ provisioner:
   inventory:
     group_vars:
       all:
-        old_kubernetes_version: ${OLD_KUBERNETES_VERSION-1.27.16}
-        kubernetes_version: ${KUBERNETES_VERSION-1.28.13}
+        old_kubernetes_version: ${OLD_KUBERNETES_VERSION-1.33.3}
+        kubernetes_version: ${KUBERNETES_VERSION-1.35.2}
         cilium_helm_values:
           operator:
             replicas: 1
       controllers:
-        clusterctl_version: 1.6.0
+        clusterctl_version: 1.9.6
         cluster_api_node_selector:
           kubernetes.io/os: linux
         keepalived_interface: "{{ ansible_facts['default_ipv4'].interface }}"

@@ -37,7 +37,7 @@ jobs:
           - ubuntu2404
           - debian13
         scenario:
-          - ha
+          - molecule-ha
     steps:
       - name: Checkout project
         uses: actions/checkout@v3
@@ -47,15 +47,16 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: 'test-requirements.txt'
 
-      - name: Install Molecule
-        run: pip install -r requirements.txt
+      - name: Install Tox
+        run: pip install tox
 
       - name: Turn off swap
         run: sudo swapoff -a
 
-      - name: Run Molecule
-        run: molecule test -s ${{ matrix.scenario }}
+      - name: Run Tox
+        run: tox -e ${{ matrix.scenario }}
         env:
           MOLECULE_DISTRO: ${{ matrix.distro }}
           KUBERNETES_VERSION: ${{ matrix.version }}
@@ -83,9 +84,10 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: 'test-requirements.txt'
 
-      - name: Install Molecule
-        run: pip install -r requirements.txt
+      - name: Install Tox
+        run: pip install tox
 
       - name: Turn off swap
         run: sudo swapoff -a
@@ -93,8 +95,8 @@ jobs:
       - name: Bump number of inotify watchers
         run: sudo sysctl fs.inotify.max_user_watches=524288
 
-      - name: Run Molecule
-        run: molecule test -s cluster-upgrade
+      - name: Run Tox
+        run: tox -e molecule-cluster-upgrade
         env:
           OLD_KUBERNETES_VERSION: ${{ matrix.old_version }}
           KUBERNETES_VERSION: ${{ matrix.version }}
