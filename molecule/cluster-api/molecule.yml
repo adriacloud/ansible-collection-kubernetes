@@ -4,14 +4,25 @@
 dependency:
   name: galaxy
 driver:
-  name: default
-  options:
-    managed: False
-    ansible_connection_options:
-      ansible_become: "true"
-      ansible_connection: local
+  name: docker
 platforms:
   - name: instance
+    image: geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2404}-ansible:latest
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    privileged: true
+    cgroupns_mode: host
+    pre_build_image: true
+    etc_hosts:
+      k8s: 172.17.0.100
+    environment:
+      container: docker
+    security_opts:
+      - apparmor=unconfined
+    volumes:
+      - /tmp/molecule/instance/containerd:/var/lib/containerd
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - /lib/modules:/lib/modules:ro
+      - /usr/src:/host_kernel_src:ro
     groups:
       - controllers
 provisioner:
@@ -20,25 +31,28 @@ provisioner:
     connection:
       pipelining: true
     defaults:
-      callbacks_enabled: ansible.posix.profile_tasks
+      inject_facts_as_vars: false
+  lint:
+    name: ansible-lint
   inventory:
     group_vars:
       all:
-        kubernetes_version: ${KUBERNETES_VERSION-1.35.2}
+        kubernetes_version: ${KUBERNETES_VERSION:-1.35.2}
         cilium_helm_values:
           operator:
             replicas: 1
       controllers:
-        clusterctl_version: 1.12.3
-        cluster_api_version: 1.12.3
+        clusterctl_version: ${CLUSTER_API_VERSION:-1.12.3}
+        cluster_api_version: ${CLUSTER_API_VERSION:-1.12.3}
         cluster_api_infrastructure_provider: openstack
-        cluster_api_infrastructure_version: 0.14.1
-        cluster_api_openstack_controller_version: 2.4.0
+        cluster_api_infrastructure_version: ${CLUSTER_API_INFRA_VERSION:-0.14.1}
+        cluster_api_openstack_controller_version: ${CLUSTER_API_OPENSTACK_CONTROLLER:-2.4.0}
         cluster_api_node_selector:
           kubernetes.io/os: linux
         keepalived_interface: "{{ ansible_facts['default_ipv4'].interface }}"
         keepalived_vip: 172.17.0.100
         keepalived_vrid: 42
         kubernetes_hostname: "{{ ansible_facts['default_ipv4'].address }}"
+        ansible_collection_kubernetes_target_venv: /opt/k8s
 verifier:
   name: ansible
