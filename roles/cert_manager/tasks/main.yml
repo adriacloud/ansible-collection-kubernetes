@@ -14,6 +14,8 @@
 
 - name: Deploy Helm chart
   run_once: true
+  vars:
+    ansible_python_interpreter: "{{ ansible_collection_kubernetes_target_venv | default('/usr') }}/bin/python3"
   kubernetes.core.helm:
     name: "{{ cert_manager_helm_release_name }}"
     chart_ref: "{{ cert_manager_helm_chart_ref }}"

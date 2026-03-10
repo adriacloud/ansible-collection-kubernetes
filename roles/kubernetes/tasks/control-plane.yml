@@ -45,8 +45,11 @@
   ansible.builtin.pip:
     name: "{{ kubernetes_pip_packages_install | select }}"
     virtualenv: "{{ ansible_collection_kubernetes_target_venv | default(omit) }}"
+    virtualenv_command: "{{ (ansible_collection_kubernetes_target_venv is defined) | ternary('python3 -m venv', omit) }}"
 
 - name: Allow workload on control plane node
+  vars:
+    ansible_python_interpreter: "{{ ansible_collection_kubernetes_target_venv | default('/usr') }}/bin/python3"
   kubernetes.core.k8s_taint:
     state: absent
     name: "{{ kubelet_hostname }}"

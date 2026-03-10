@@ -30,6 +30,8 @@
 - name: Set node selector for CoreDNS components
   run_once: true
   delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
+  vars:
+    ansible_python_interpreter: "{{ ansible_collection_kubernetes_target_venv | default('/usr') }}/bin/python3"
   kubernetes.core.k8s:
     definition:
       apiVersion: apps/v1
