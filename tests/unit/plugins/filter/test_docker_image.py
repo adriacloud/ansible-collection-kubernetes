@@ -12,10 +12,20 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os
+import sys
+
 import pytest
-from ansible_collections.adriacloud.kubernetes.plugins.filter.docker_image import (
-    docker_image,
-)
+
+try:
+    from ansible_collections.adriacloud.kubernetes.plugins.filter.docker_image import (
+        docker_image,
+    )
+except ImportError:
+    sys.path.append(os.path.join(os.path.dirname(__file__), "../../../.."))
+    from plugins.filter.docker_image import (
+        docker_image,
+    )
 
 
 @pytest.mark.parametrize(
