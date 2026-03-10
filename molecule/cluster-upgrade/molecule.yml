@@ -34,7 +34,7 @@ platforms:
       - /tmp/molecule/k8s-${MOLECULE_SCENARIO_NAME}-1:/var/lib/containerd
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /lib/modules:/lib/modules:ro
-      - /usr/src:/usr/src:ro
+      - /usr/src:/host_kernel_src:ro
     groups:
       - controllers
   - <<: *instance_config
@@ -43,14 +43,14 @@ platforms:
       - /tmp/molecule/k8s-${MOLECULE_SCENARIO_NAME}-2:/var/lib/containerd
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /lib/modules:/lib/modules:ro
-      - /usr/src:/usr/src:ro
+      - /usr/src:/host_kernel_src:ro
   - <<: *instance_config
     name: k8s-${MOLECULE_SCENARIO_NAME}-3
     volumes:
       - /tmp/molecule/k8s-${MOLECULE_SCENARIO_NAME}-3:/var/lib/containerd
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /lib/modules:/lib/modules:ro
-      - /usr/src:/usr/src:ro
+      - /usr/src:/host_kernel_src:ro
 provisioner:
   name: ansible
   config_options:

@@ -1,0 +1,50 @@
+# Copyright (c) 2026 Adria Cloud Services.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+- name: Cleanup container mounts
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Cleanup if containers are reachable
+      block:
+        - name: Verify container is actually running
+          ansible.builtin.raw: "true"
+          changed_when: false
+
+        - name: Stop containerd
+          ansible.builtin.service:
+            name: containerd
+            state: stopped
+
+        - name: Force unmount all containerd resources
+          ansible.builtin.shell: |
+            # Find all mounts under the containerd state and run dirs
+            for mnt in $(mount | grep -E "/run/containerd|/var/lib/containerd" | awk '{print $3}' | sort -r); do
+              umount -rl "$mnt" || true
+            done
+          become: true
+          changed_when: false
+          # This task is prone to failing if the container is already gone,
+          # so we ignore errors to keep the cleanup moving.
+          ignore_errors: true
+
+        - name: Remove containerd content from mount paths
+          ansible.builtin.file:
+            path: /var/lib/containerd
+            state: absent
+      rescue:
+        - name: Skip if container is dead/unreachable
+          ansible.builtin.debug:
+            msg: "Skipping internal cleanup."

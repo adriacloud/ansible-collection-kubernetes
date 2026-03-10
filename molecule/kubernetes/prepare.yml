@@ -43,7 +43,23 @@
       ansible.builtin.package:
         name:
           - dbus
+          - rsync
         update_cache: true
+
+    - name: Check if host kernel source is mounted
+      ansible.builtin.stat:
+        path: /host_kernel_src
+      register: host_kernel_src_dir
+
+    - name: Copy host kernel headers into container's writable /usr/src
+      ansible.posix.synchronize:
+        src: /host_kernel_src/
+        dest: /usr/src/
+        delete: true
+        recursive: true
+      delegate_to: "{{ inventory_hostname }}"
+      when:
+        - host_kernel_src_dir.stat.exists
 
     - name: Install RHEL packages
       ansible.builtin.package:

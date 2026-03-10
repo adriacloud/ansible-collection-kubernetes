@@ -31,26 +31,26 @@ platforms:
     security_opts:
       - apparmor=unconfined
     volumes:
-      - /tmp/molecule/instance-1:/var/lib/containerd
+      - /tmp/molecule/instance-1/containerd:/var/lib/containerd
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /lib/modules:/lib/modules:ro
-      - /usr/src:/usr/src:ro
+      - /usr/src:/host_kernel_src:ro
     groups:
       - controllers
   - <<: *instance_config
     name: instance-2
     volumes:
-      - /tmp/molecule/instance-2:/var/lib/containerd
+      - /tmp/molecule/instance-2/containerd:/var/lib/containerd
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /lib/modules:/lib/modules:ro
-      - /usr/src:/usr/src:ro
+      - /usr/src:/host_kernel_src:ro
   - <<: *instance_config
     name: instance-3
     volumes:
-      - /tmp/molecule/instance-3:/var/lib/containerd
+      - /tmp/molecule/instance-3/containerd:/var/lib/containerd
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /lib/modules:/lib/modules:ro
-      - /usr/src:/usr/src:ro
+      - /usr/src:/host_kernel_src:ro
 provisioner:
   name: ansible
   config_options:
