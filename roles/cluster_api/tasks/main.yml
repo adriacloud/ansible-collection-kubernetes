@@ -19,18 +19,22 @@
 
 - name: Get a list of all Cluster API providers
   run_once: true
+  vars:
+    ansible_python_interpreter: "{{ ansible_collection_kubernetes_target_venv | default('/usr') }}/bin/python3"
   kubernetes.core.k8s_info:
     api_version: clusterctl.cluster.x-k8s.io/v1alpha3
     kind: Provider
   register: cluster_api_providers
 
 - name: Initialize Cluster API
-  ansible.builtin.import_tasks: init.yml
+  ansible.builtin.include_tasks: init.yml
   when: cluster_api_providers.resources | length == 0
 
 - name: Upgrade Cluster API
-  ansible.builtin.import_tasks: upgrade.yml
+  ansible.builtin.include_tasks: upgrade.yml
   when: cluster_api_providers.resources | length != 0
 
 - name: Patch Cluster API
+  vars:
+    ansible_python_interpreter: "{{ ansible_collection_kubernetes_target_venv | default('/usr') }}/bin/python3"
   ansible.builtin.import_tasks: patch.yml
