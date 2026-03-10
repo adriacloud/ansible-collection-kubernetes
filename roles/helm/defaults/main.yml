@@ -29,11 +29,6 @@ helm_download_url: "https://get.helm.sh/helm-{{ helm_version }}-{{ ansible_facts
 helm_download_dest: "{{ download_artifact_work_directory }}/helm-{{ helm_version }}-{{ ansible_facts['system'] | lower }}-{{ download_artifact_goarch }}.tar.gz"
 helm_binary_checksum: "{{ helm_checksums[download_artifact_goarch][helm_version] }}"
 
-# NOTE(fitbeard): This is to accomodate for the uninstallation of the old packages
-#               that shipped with the operating system
-helm_package_name: helm
-helm_repository_apt: "deb https://baltocdn.com/helm/stable/debian/ all main"
-
 helm_diff_version: v3.15.2
 helm_diff_checksums:
   amd64:

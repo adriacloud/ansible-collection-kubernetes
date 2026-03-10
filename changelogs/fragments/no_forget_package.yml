@@ -1,0 +1,4 @@
+---
+deprecated_features:
+  - Collection no longer cleans-up components, if they were installed
+    from system packages.

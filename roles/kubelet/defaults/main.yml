@@ -66,10 +66,6 @@ kubelet_download_url: "https://dl.k8s.io/release/v{{ kubelet_version }}/bin/{{ a
 kubelet_download_dest: /usr/bin/kubelet
 kubelet_binary_checksum: "{{ kubelet_checksums[download_artifact_goarch][kubelet_version] }}"
 
-# NOTE(mnaser): This is to accomodate for the uninstallation of the old packages
-#               that shipped with the operating system
-kubelet_package_name: kubelet
-
 # Allow usage of swap memory for the Kubelet
 # WARNING: Do not enable this unless you know what you are doing.
 kubelet_allow_unsafe_swap: false

@@ -32,9 +32,6 @@ dependencies:
   - role: vexxhost.containers.containerd
   - role: vexxhost.containers.cri_tools
   - role: vexxhost.containers.cni_plugins
-  - role: vexxhost.containers.forget_package
-    forget_package_name: "{{ kubelet_package_name }}"
-    when: ansible_facts['pkg_mgr'] == "apt"
   - role: vexxhost.containers.download_artifact
     download_artifact_url: "{{ kubelet_download_url }}"
     download_artifact_dest: "{{ kubelet_download_dest }}"

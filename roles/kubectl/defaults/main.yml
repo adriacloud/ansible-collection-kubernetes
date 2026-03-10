@@ -65,7 +65,3 @@ kubectl_checksums:
 kubectl_download_url: "https://dl.k8s.io/release/v{{ kubectl_version }}/bin/{{ ansible_facts['system'] | lower }}/{{ download_artifact_goarch }}/kubectl" # noqa: yaml[line-length]
 kubectl_download_dest: /usr/bin/kubectl
 kubectl_binary_checksum: "{{ kubectl_checksums[download_artifact_goarch][kubectl_version] }}"
-
-# NOTE(mnaser): This is to accomodate for the uninstallation of the old packages
-#               that shipped with the operating system
-kubectl_package_name: kubectl
