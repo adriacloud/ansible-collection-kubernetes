@@ -1,8 +1,10 @@
-ansible-core<2.19
+ansible-core<2.20
+ansible-lint==26.3.0
 docker-image-py
 jmespath
-molecule<=24.9.0
+molecule==26.3.0
 molecule-plugins[docker]
 pytest < 8.0.0
+pytest-cov
 pytest-forked
 pytest-xdist
