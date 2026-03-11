@@ -1,4 +1,8 @@
 # Ansible collection for Kubernetes
+[![Molecule](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/molecule.yml/badge.svg)](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/molecule.yml)
+[![Unit Tests](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/pytest.yml/badge.svg)](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/pytest.yml)
+
+
 
 This is a forked version of [`vexxhost.kubernetes`](https://github.com/vexxhost/ansible-collection-kubernetes)
 collection which is intended to be agnostic from Atmosphere implementation

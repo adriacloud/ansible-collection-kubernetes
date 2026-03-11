@@ -42,3 +42,10 @@ jobs:
         run: pip install tox
       - name: Run unit tests
         run: tox -e py3
+
+      - name: Upload coverage report
+        if: matrix.python == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html-report
+          path: htmlcov/
