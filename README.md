@@ -1,6 +1,6 @@
 # Ansible collection for Kubernetes
 [![Molecule](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/molecule.yml/badge.svg)](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/molecule.yml)
-[![Unit Tests](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/pytest.yml/badge.svg)](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/pytest.yml)
+[![Unit Tests](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/adriacloud/ansible-collection-kubernetes/actions/workflows/unit-tests.yml)
 
 
 
