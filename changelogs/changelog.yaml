@@ -1,22 +1,23 @@
+---
 ancestor: null
 releases:
   26.3.0:
     changes:
       bugfixes:
-      - Ensured, that proper python interpreter is used, when ansible_collection_kubernetes_target_venv
-        is defined.
+        - Ensured, that proper python interpreter is used, when ansible_collection_kubernetes_target_venv
+          is defined.
       deprecated_features:
-      - Collection no longer cleans-up components, if they were installed from system
-        packages.
-      - Support for Debian 12 has been deprecated
+        - Collection no longer cleans-up components, if they were installed from system
+          packages.
+        - Support for Debian 12 has been deprecated
       minor_changes:
-      - Added support for CAPO versions 0.13.4 and 0.14.1
-      - Added support for HELM versions v3.19.5 and v3.20.0
-      - Added support for ansible-core 2.19 and later.
-      - Added support for clusterctl versions 1.10.10, 1.11.6, 1.12.3
-      - Added support for kubernetes versions 1.34.5 and 1.35.2
+        - Added support for CAPO versions 0.13.4 and 0.14.1
+        - Added support for HELM versions v3.19.5 and v3.20.0
+        - Added support for ansible-core 2.19 and later.
+        - Added support for clusterctl versions 1.10.10, 1.11.6, 1.12.3
+        - Added support for kubernetes versions 1.34.5 and 1.35.2
     fragments:
-    - ansible_core_2_19.yml
-    - k8s_1_35.yml
-    - no_forget_package.yml
+      - ansible_core_2_19.yml
+      - k8s_1_35.yml
+      - no_forget_package.yml
     release_date: '2026-03-11'
