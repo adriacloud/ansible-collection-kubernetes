@@ -28,7 +28,7 @@
   kubernetes.core.k8s:
     state: present
     template:
-      - path: "controllers/{{ cluster_api_infrastructure_provider }}-resource-controller/install.yaml.j2"
+      - path: "controllers/{{ cluster_api_infrastructure_provider }}-resource-controller/{{ cluster_api_openstack_controller_version }}/install.yaml.j2"
     apply: true
     server_side_apply:
       field_manager: ansible
