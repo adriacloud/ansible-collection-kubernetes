@@ -105,16 +105,24 @@ def docker_image(value, part="ref", registry=None):
     # NOTE(mnaser): We re-write the name of a few images to make sense of them
     #               in the context of the override registry.
     ref_name = ref.repository["path"].split("/")[-1]
-    if value == "skopeo":
+    if ref_name == "skopeo":
         ref_name = "skopeo-stable"
 
-    # NOTE(mnaser): Since the attributes inside of reference.Reference are not
-    #               determined during parse time, we need to re-parse the
-    #               string to get the correct attributes.
-    ref["name"] = "{}/{}".format(registry, ref_name)
-    ref = reference.Reference.parse(ref.string())
+    # NOTE: We need to reconstruct the image reference string to apply
+    #       the registry override and any special renaming. The previous
+    #       method of modifying `ref['name']` and re-parsing was lossy
+    #       with implicit tags.
+    tag = ref["tag"]
+    if not tag and not ref["digest"]:
+        tag = "latest"
 
-    return _lookup_part(ref, part)
+    new_ref_string = "{}/{}".format(registry, ref_name)
+    if tag:
+        new_ref_string = "{}:{}".format(new_ref_string, tag)
+    if ref["digest"]:
+        new_ref_string = "{}@{}".format(new_ref_string, ref["digest"])
+
+    return _lookup_part(reference.Reference.parse(new_ref_string), part)
 
 
 class FilterModule(object):
