@@ -7,7 +7,7 @@ authors:
   - Dmitriy Rabotyagov <dmitriy@adria-cloud.com>
 description: Fork of Vexxhost Ansible collection for deploying Kubernetes clusters
 license:
-  - GPL-3.0-or-later
+  - Apache-2.0
 dependencies:
   ansible.posix: ">=1.3.0"
   community.crypto: ">=2.2.3"
