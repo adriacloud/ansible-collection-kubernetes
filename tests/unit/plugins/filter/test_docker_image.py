@@ -19,16 +19,9 @@ import pytest
 from docker_image import reference
 from ansible.errors import AnsibleFilterError
 
-try:
-    from ansible_collections.adriacloud.kubernetes.plugins.filter.docker_image import (
-        docker_image,
-    )
-
-except ImportError:
-    sys.path.append(os.path.join(os.path.dirname(__file__), "../../../.."))
-    from plugins.filter.docker_image import (
-        docker_image,
-    )
+from ansible_collections.adriacloud.kubernetes.plugins.filter.docker_image import (
+    docker_image,
+)
 
 
 @pytest.mark.parametrize(
