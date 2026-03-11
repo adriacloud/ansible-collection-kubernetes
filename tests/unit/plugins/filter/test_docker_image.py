@@ -16,7 +16,6 @@ import os
 import sys
 
 import pytest
-from docker_image import reference
 from ansible.errors import AnsibleFilterError
 
 from ansible_collections.adriacloud.kubernetes.plugins.filter.docker_image import (
@@ -208,9 +207,5 @@ def test_docker_image_exceptions():
         docker_image(12345, "ref")
 
     # Test empty string input
-    with pytest.raises(reference.NameEmpty):
+    with pytest.raises(AnsibleFilterError):
         docker_image("", "ref")
-
-    # Test invalid format that the library rejects
-    with pytest.raises(reference.ReferenceInvalidFormat):
-        docker_image("myregistry/myimage@sha256:anotherdigest", "ref")

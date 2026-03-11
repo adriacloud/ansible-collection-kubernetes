@@ -19,12 +19,7 @@ __metaclass__ = type
 from ansible.errors import AnsibleFilterError
 from ansible.module_utils.common.collections import is_string
 
-try:
-    from docker_image import reference
 
-    HAS_DOCKER_IMAGE = True
-except ImportError:
-    HAS_DOCKER_IMAGE = False
 
 DOCUMENTATION = """
   name: docker_image
@@ -68,6 +63,8 @@ RETURN = """
     type: string
 """
 
+DEFAULT_DOMAIN = "docker.io"
+
 
 def docker_image(value, part="ref", registry=None):
     if not is_string(value):
@@ -75,54 +72,68 @@ def docker_image(value, part="ref", registry=None):
             "Invalid value type (%s) for docker_image (%r)" % (type(value), value)
         )
 
-    if not HAS_DOCKER_IMAGE:
-        raise AnsibleFilterError(
-            "Failed to import docker-image-py module, ensure it is installed on the controller"
-        )
+    if not value:
+        raise AnsibleFilterError("Invalid value for docker_image: empty string")
 
-    def _lookup_part(ref, part):
-        if part == "ref":
-            return ref.string()
-        if part == "name":
-            return ref["name"]
-        if part == "tag":
-            return ref["tag"]
-        if part == "domain":
-            return ref.repository["domain"]
-        if part == "path":
-            return ref.repository["path"]
-        if part == "digest":
-            return ref["digest"]
-        if part == "prefix":
-            path_parts = ref.repository["path"].split("/")[:-1]
-            parts = [ref.repository["domain"]] + path_parts
-            return "/".join(parts)
+    def _parse(ref_str):
+        digest = None
+        if "@" in ref_str:
+            ref_str, digest = ref_str.rsplit("@", 1)
 
-    ref = reference.Reference.parse(value)
+        tag = None
+        last_slash = ref_str.rfind("/")
+        last_colon = ref_str.rfind(":")
+        if last_colon > last_slash:
+            ref_str, tag = ref_str.rsplit(":", 1)
+
+        name = ref_str
+
+        parts = name.split("/")
+        if len(parts) > 1 and ("." in parts[0] or ":" in parts[0] or parts[0] == "localhost"):
+            domain = parts[0]
+            path = "/".join(parts[1:])
+        elif len(parts) > 1:
+            domain = DEFAULT_DOMAIN
+            path = name
+        else:
+            domain = DEFAULT_DOMAIN
+            path = "library/" + name
+
+        if "/" in path:
+            prefix = domain + "/" + path.rsplit("/", 1)[0]
+        else:
+            prefix = domain
+
+        return {
+            "ref": name + ((":" + tag) if tag else "") + (("@" + digest) if digest else ""),
+            "name": name,
+            "tag": tag,
+            "digest": digest,
+            "domain": domain,
+            "path": path,
+            "prefix": prefix
+        }
+
+    parsed = _parse(value)
     if not registry:
-        return _lookup_part(ref, part)
+        return parsed.get(part)
 
-    # NOTE(mnaser): We re-write the name of a few images to make sense of them
-    #               in the context of the override registry.
-    ref_name = ref.repository["path"].split("/")[-1]
+    path_val = parsed.get("path") or ""
+    ref_name = path_val.split("/")[-1] if path_val else ""
     if ref_name == "skopeo":
         ref_name = "skopeo-stable"
 
-    # NOTE: We need to reconstruct the image reference string to apply
-    #       the registry override and any special renaming. The previous
-    #       method of modifying `ref['name']` and re-parsing was lossy
-    #       with implicit tags.
-    tag = ref["tag"]
-    if not tag and not ref["digest"]:
+    tag = parsed.get("tag")
+    if not tag and not parsed.get("digest"):
         tag = "latest"
 
     new_ref_string = "{}/{}".format(registry, ref_name)
     if tag:
         new_ref_string = "{}:{}".format(new_ref_string, tag)
-    if ref["digest"]:
-        new_ref_string = "{}@{}".format(new_ref_string, ref["digest"])
+    if parsed["digest"]:
+        new_ref_string = "{}@{}".format(new_ref_string, parsed["digest"])
 
-    return _lookup_part(reference.Reference.parse(new_ref_string), part)
+    return _parse(new_ref_string).get(part)
 
 
 class FilterModule(object):

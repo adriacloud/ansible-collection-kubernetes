@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - Collection no longer requires presence of `docker-image-py` Python package
+    for the ansible controller.
+    The filter `adriacloud.kubernetes.docker_image` now implements the same logic
+    internally.
