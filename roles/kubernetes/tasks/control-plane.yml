@@ -70,7 +70,7 @@
       ansible.builtin.shell: |
         kubeadm upgrade apply --v=5 --yes v{{ kubernetes_version }}
 
-    - name: Check if the Kubernetes API services is up to date
+    - name: Check if the Kubernetes API services is up to date # noqa: var-naming[no-role-prefix]
       ansible.builtin.command:
         cmd: grep -q "v{{ kubernetes_version }}" /etc/kubernetes/manifests/kube-apiserver.yaml
       changed_when: false

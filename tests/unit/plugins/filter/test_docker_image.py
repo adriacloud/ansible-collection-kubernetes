@@ -12,12 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
-import sys
-
 import pytest
 from ansible.errors import AnsibleFilterError
-
 from ansible_collections.adriacloud.kubernetes.plugins.filter.docker_image import (
     docker_image,
 )

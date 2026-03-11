@@ -20,7 +20,6 @@ from ansible.errors import AnsibleFilterError
 from ansible.module_utils.common.collections import is_string
 
 
-
 DOCUMENTATION = """
   name: docker_image
   short_description: Parse a Docker image reference

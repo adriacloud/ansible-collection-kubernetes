@@ -23,7 +23,7 @@
         owner: root
         group: root
 
-    - name: Upload helm chart with multi_copy
+    - name: Upload helm chart with multi_copy # noqa: var-naming[no-role-prefix]
       adriacloud.kubernetes.multi_copy:
         src: "{{ upload_helm_chart_src }}"
         dest: "{{ upload_helm_chart_dest }}"
@@ -34,7 +34,7 @@
       register: multi_copy
       when: upload_helm_chart_method == 'copy'
 
-    - name: Find destination files
+    - name: Find destination files # noqa: var-naming[no-role-prefix]
       ansible.builtin.find:
         paths: "{{ upload_helm_chart_dest }}"
         recurse: true
