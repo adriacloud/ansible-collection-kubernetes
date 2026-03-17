@@ -50,7 +50,6 @@ kubernetes_pip_packages_base:
 kubernetes_pip_packages_venv:
   - cryptography   # required to examine certificates
   - pyyaml         # required for helm
-  - kubernetes     # required for kubernetes upgrade check
 
 # Python packages to install
 kubernetes_pip_packages_install: >-
