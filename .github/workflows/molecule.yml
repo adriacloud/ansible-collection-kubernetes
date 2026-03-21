@@ -69,6 +69,35 @@ jobs:
           CLUSTER_API_INFRA_VERSION: ${{ matrix.capo }}
           CLUSTER_API_OPENSTACK_CONTROLLER: ${{ matrix.orc }}
 
+  download_artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: true
+      matrix:
+        distro:
+          - rockylinux10
+          - ubuntu2404
+          - debian13
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: 'test-requirements.txt'
+
+      - name: Install Tox
+        run: pip install tox
+
+      - name: Run Tox
+        run: tox -e molecule-artifacts
+        env:
+          MOLECULE_DISTRO: ${{ matrix.distro }}
+
   kubernetes:
     runs-on: ubuntu-latest
     timeout-minutes: 15

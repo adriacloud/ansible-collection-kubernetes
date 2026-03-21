@@ -1,0 +1,40 @@
+# Copyright (c) 2026 Adria Cloud Services
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+# Define artifacts, which should be downloaded to the destination
+# hosts and unpacked (if necessary). A list of mappings should be
+# passed to the role.
+# Example:
+# download_artifacts_list:
+#   - url: https://example.com/artifact.tgz
+#     download_dest: /tmp/downloads/artifact.tar.gz
+#     checksum: sha256:6325082a61e93ff37661d8939620c8069ba2c3f2681276f3aa2c0ac07014066c
+#     force_basic_auth: true
+#     owner: root
+#     group: root
+#     mode: "0640"
+#     headers:
+#       Content-Type: application/json
+#     validate_certs: true
+#     notify:
+#       - binary_changed
+#     url_username: admin
+#     url_password: password
+#     unarchive: true
+#     # Supported formats: tgz (default), gz, xz, bz2
+#     unarchive_format: tgz
+#     unarchive_dest:
+#     unarchive_extra_opts:
+
+download_artifacts_list: []

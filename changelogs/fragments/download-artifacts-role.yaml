@@ -1,0 +1,9 @@
+---
+major_changes:
+  - Added role `adriacloud.kubernetes.download_artifacts` which aims to replace
+    the `vexxhost.containers.download_artifact` role in the future.
+    Main difference is that the new role accepts a list of arguments to download,
+    instead requiring to call the role include in a loop.
+    It maintains all same features as the original one.
+    Though, in order to use proxy connection, operators are expected to define
+    `environment` on the playbook level, or for the `include_role`.

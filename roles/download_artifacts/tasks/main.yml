@@ -1,0 +1,55 @@
+---
+# Copyright (c) 2026 Adria Cloud Services.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+- name: Create destination directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item | dirname }}"
+    mode: "0755"
+  loop: "{{ download_artifacts_list | select | map(attribute='dest') }}"
+
+- name: Download artifacts from remote
+  vars:
+    loop_control_label:
+      url: "{{ item.url }}"
+      dest: "{{ item.dest }}"
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default(omit) }}"
+    group: "{{ item.group | default(omit) }}"
+    mode: "{{ item.mode | default(omit) }}"
+    checksum: "{{ item.checksum | default(omit) }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    headers: "{{ item.headers | default(omit) }}"
+    force_basic_auth: "{{ item.force_basic_auth | default(omit) }}"
+    url_username: "{{ item.url_username | default(omit) }}"
+    url_password: "{{ item.url_password | default(omit) }}"
+  register: _download_artifacts_result
+  until: _download_artifacts_result is succeeded
+  retries: 5
+  delay: 2
+  loop: "{{ download_artifacts_list | select }}"
+  loop_control:
+    label: "{{ loop_control_label | to_json }}"
+  notify: "{{ item.notify }}"
+
+- name: Include unarchive tasks
+  vars:
+    _download_artifacts_compressed: "{{ download_artifacts_list | selectattr('unarchive', 'defined') | selectattr('unarchive', 'true') }}"
+  ansible.builtin.include_tasks:
+    file: unarchive.yml
+  when:
+    - _download_artifacts_compressed | length > 0

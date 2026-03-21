@@ -1,0 +1,55 @@
+# Copyright (c) 2024 VEXXHOST, Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2404}-ansible:latest
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    privileged: true
+    pre_build_image: true
+    cgroupns_mode: host
+    environment:
+      container: docker
+    security_opts:
+      - apparmor=unconfined
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - /lib/modules:/lib/modules:ro
+      - /usr/src:/host_kernel_src:ro
+    groups:
+      - artifacts
+provisioner:
+  name: ansible
+  config_options:
+    connection:
+      pipelining: true
+    defaults:
+      inject_facts_as_vars: false
+  inventory:
+    group_vars:
+      all:
+        test_dest: /tmp/downloads/artifact.tar.gz
+        test_handler_path: /tmp/handler_executed
+        test_checksum: dbb4c8fc8e19d159d1a63dda8db655f9ffa4aac1b9a6b188b34a40957119b286
+        download_artifacts_list:
+          - url: https://get.helm.sh/helm-v3.20.0-linux-amd64.tar.gz
+            dest: "{{ test_dest }}"
+            checksum: "sha256:{{ test_checksum }}"
+            notify:
+              - download_changed
+            unarchive: true
+            # Supported formats: tgz (default), gz, xz, bz2
+            unarchive_format: tgz
+            unarchive_extra_opts:
+              - --strip-components=1
+  lint:
+    name: ansible-lint
+verifier:
+  name: ansible
+
+scenario:
+  name: download_artifacts
