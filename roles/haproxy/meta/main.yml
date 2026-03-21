@@ -21,15 +21,13 @@ galaxy_info:
   platforms:
     - name: EL
       versions:
-        - "8"
         - "9"
+        - "10"
     - name: Ubuntu
       versions:
-        - focal
         - jammy
-
-dependencies:
-  - role: vexxhost.containers.directory
-    directory_path: /etc/haproxy
-  - role: vexxhost.containers.directory
-    directory_path: /etc/kubernetes/manifests
+        - noble
+    - name: Debian
+      versions:
+        - bookworm
+        - trixie

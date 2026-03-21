@@ -12,6 +12,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+- name: Ensure destination directories exist
+  ansible.builtin.file:
+    path: /etc/kubernetes/manifests
+    mode: "0755"
+    state: directory
+
 - name: Uninstall legacy HA stack
   ansible.builtin.file:
     path: "{{ item }}"
@@ -66,23 +72,25 @@
     - inventory_hostname == groups[kube_vip_control_plane_group] | first
     - (kube_vip_stat_super_admin.stat.exists and kube_vip_stat_super_admin.stat.isreg) or (not kube_vip_stat_kubelet_config.stat.exists)
 
-- name: Upload Kubernetes manifest
-  when: kube_vip_enabled | bool
+- name: Upload Kubernetes kube-vip manifest
   ansible.builtin.template:
     src: kube-vip.yaml.j2
     dest: /etc/kubernetes/manifests/kube-vip.yaml
     owner: root
     group: root
     mode: "0640"
-  changed_when: false
+  when:
+    - kube_vip_enabled | bool
 
-- name: Ensure kube-vip configuration file
+- name: Remove kube-vip configuration file when disabled
   ansible.builtin.file:
     path: /etc/kubernetes/manifests/kube-vip.yaml
-    state: "{{ (kube_vip_enabled | bool) | ternary('file', 'absent') }}"
+    state: absent
     owner: root
     group: root
     mode: "0640"
+  when:
+    - not kube_vip_enabled | bool
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
