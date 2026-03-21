@@ -1,5 +1,10 @@
 ---
 major_changes:
+  - Role `vexxhost.containers.download_artifact` has been replaced with
+    `adriacloud.kubernetes.download_artifacts`, which is included explicitly
+    in tasks and can accept a list of artifacts for download.
+
+minor_changes:
   - Added role `adriacloud.kubernetes.download_artifacts` which aims to replace
     the `vexxhost.containers.download_artifact` role in the future.
     Main difference is that the new role accepts a list of arguments to download,
@@ -7,3 +12,9 @@ major_changes:
     It maintains all same features as the original one.
     Though, in order to use proxy connection, operators are expected to define
     `environment` on the playbook level, or for the `include_role`.
+  - Added role `adriacloud.kubernetes.defaults` which is going to carry re-usable
+    variables, not avoid repeating ourselves.
+    Role consists solely from defaults file, and will be included/loaded from other
+    roles in the collection.
+  - Helm diff plugin installation can be disabled with `adriacloud.kubernetes.helm`
+    role by setting `helm_diff_version` to an empty string.

@@ -29,7 +29,7 @@
     include: "{{ item.unarchive_include | default(omit) }}"
     exclude: "{{ item.unarchive_exclude | default(omit) }}"
     extra_opts: "{{ item.unarchive_extra_opts | default(omit) }}"
-  notify: "{{ item.notify }}"
+  notify: "{{ item.notify | default([]) }}"
   loop: >-
     {{
       _download_artifacts_compressed | selectattr('unarchive_format', 'undefined') +

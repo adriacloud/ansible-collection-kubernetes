@@ -44,7 +44,7 @@
   loop: "{{ download_artifacts_list | select }}"
   loop_control:
     label: "{{ loop_control_label | to_json }}"
-  notify: "{{ item.notify }}"
+  notify: "{{ item.notify | default([]) }}"
 
 - name: Include unarchive tasks
   vars:

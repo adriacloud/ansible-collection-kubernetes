@@ -25,9 +25,9 @@ helm_checksums:
     v3.19.5: ce02147ffee6d993bf8ae97a44a22e9e1daf0b69d2d5b69a0c8cf6706445ccf5
     v3.20.0: bfb14953295d5324d47ab55f3dfba6da28d46c848978c8fbf412d4271bdc29f1
 
-helm_download_url: "https://get.helm.sh/helm-{{ helm_version }}-{{ ansible_facts['system'] | lower }}-{{ download_artifact_goarch }}.tar.gz"
-helm_download_dest: "{{ download_artifact_work_directory }}/helm-{{ helm_version }}-{{ ansible_facts['system'] | lower }}-{{ download_artifact_goarch }}.tar.gz"
-helm_binary_checksum: "{{ helm_checksums[download_artifact_goarch][helm_version] }}"
+helm_download_url: "https://get.helm.sh/helm-{{ helm_version }}-{{ ansible_facts['system'] | lower }}-{{ defaults_goarch }}.tar.gz"
+helm_download_dest: "/var/lib/downloads/helm-{{ helm_version }}-{{ ansible_facts['system'] | lower }}-{{ defaults_goarch }}.tar.gz"
+helm_binary_checksum: "{{ helm_checksums[defaults_goarch][helm_version] }}"
 
 helm_diff_version: v3.15.2
 helm_diff_checksums:
@@ -38,6 +38,7 @@ helm_diff_checksums:
     v3.8.1: d451e4772a3987710f485de4caed760583c88f8f15864a623b3fbd73be7077ec
     v3.15.2: 077477871be96a866fb2ef777fd1cb2c66e6b3768bd5139672c567e2d0038b04
 
-helm_diff_download_url: "https://github.com/databus23/helm-diff/releases/download/{{ helm_diff_version }}/helm-diff-{{ ansible_facts['system'] | lower }}-{{ download_artifact_goarch }}.tgz" # noqa: yaml[line-length]
-helm_diff_download_dest: "{{ download_artifact_work_directory }}/helm-diff-{{ ansible_facts['system'] | lower }}-{{ download_artifact_goarch }}.tgz"
-helm_diff_checksum: "{{ helm_diff_checksums[download_artifact_goarch][helm_diff_version] }}"
+helm_diff_download_url: >-
+  https://github.com/databus23/helm-diff/releases/download/{{ helm_diff_version }}/helm-diff-{{ ansible_facts['system'] | lower }}-{{ defaults_goarch }}.tgz
+helm_diff_download_dest: "/var/lib/downloads/helm-diff-{{ ansible_facts['system'] | lower }}-{{ defaults_goarch }}.tgz"
+helm_diff_checksum: "{{ helm_diff_checksums[defaults_goarch][helm_diff_version] }}"

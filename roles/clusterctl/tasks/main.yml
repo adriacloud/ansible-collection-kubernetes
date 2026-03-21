@@ -12,6 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+- name: Including downloading/installing clusterctl
+  ansible.builtin.include_role:
+    name: adriacloud.kubernetes.download_artifacts
+  vars:
+    download_artifacts_list:
+      - url: "{{ clusterctl_download_url }}"
+        dest: "{{ clusterctl_download_dest }}"
+        checksum: "sha256:{{ clusterctl_binary_checksum }}"
+        owner: root
+        group: root
+        mode: '0755'
+
 - name: Create a configuration file
   ansible.builtin.copy:
     content: "{{ _clusterctl_config_content }}"
