@@ -21,17 +21,16 @@ galaxy_info:
   platforms:
     - name: EL
       versions:
-        - "8"
         - "9"
+        - "10"
     - name: Ubuntu
       versions:
-        - focal
         - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bookworm
+        - trixie
 
 dependencies:
-  - role: vexxhost.containers.download_artifact
-    download_artifact_url: "{{ kubeadm_download_url }}"
-    download_artifact_dest: "{{ kubeadm_download_dest }}"
-    download_artifact_checksum: "sha256:{{ kubeadm_binary_checksum }}"
-    download_artifact_owner: root
-    download_artifact_mode: "0755"
+  - role: adriacloud.kubernetes.defaults

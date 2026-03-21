@@ -21,6 +21,18 @@
     - "{{ ansible_facts['distribution'] | lower }}.yml"
     - "{{ ansible_facts['os_family'] | lower }}.yml"
 
+- name: Including download and install of kubelet
+  ansible.builtin.include_role:
+    name: adriacloud.kubernetes.download_artifacts
+  vars:
+    download_artifacts_list:
+      - url: "{{ kubelet_download_url }}"
+        dest: "{{ kubelet_download_dest }}"
+        checksum: "sha256:{{ kubelet_binary_checksum }}"
+        owner: root
+        group: root
+        mode: "0755"
+
 # NOTE(mnaser): Sometimes EL ships with coreutils, sometimes it ships
 #               with coreutils-single.  We need to ensure that we have
 #               coreutils installed.

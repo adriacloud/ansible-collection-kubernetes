@@ -43,7 +43,3 @@
     - role: cilium
       tags:
         - cilium
-
-    # - role: csi
-    #   tags:
-    #     - csi
