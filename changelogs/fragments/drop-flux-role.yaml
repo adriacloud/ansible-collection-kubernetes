@@ -1,0 +1,7 @@
+---
+breaking_changes:
+  - Role for ``flux`` deployment has been removed from the collection.
+    It was not required for a kubernetes deployment, and goal of this
+    collection is to perform a functional kubernetes cluster deployment,
+    while management tools for these kubernetes clusters are left out of
+    the collection scope.
