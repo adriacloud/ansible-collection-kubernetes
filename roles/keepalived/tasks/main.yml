@@ -12,6 +12,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+- name: Ensure destination directories exist
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode | default('0755') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    state: directory
+  loop:
+    - path: /etc/keepalived'
+    - path: /etc/kubernetes/manifests
+
 - name: Upload configuration
   ansible.builtin.template:
     src: keepalived.conf.j2

@@ -12,13 +12,27 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+- name: Ensure destination directories exist
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode | default('0755') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    state: directory
+  loop:
+    - path: /etc/haproxy
+      owner: haproxy
+      group: haproxy
+      mode: '0750'
+    - path: /etc/kubernetes/manifests
+
 - name: Upload configuration
   ansible.builtin.template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
-    owner: root
-    group: root
-    mode: "0644"
+    owner: haproxy
+    group: haproxy
+    mode: "0640"
 
 - name: Upload Kubernetes manifest
   ansible.builtin.template:
