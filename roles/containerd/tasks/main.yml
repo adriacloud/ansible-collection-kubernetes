@@ -40,11 +40,13 @@
     state: directory
     owner: root
     group: root
-    mode: "0644"
+    mode: "{{ item.mode | default('0755') }}"
   when:
     - item.condition | default(true)
   loop:
     - path: "{{ containerd_config_file | dirname }}"
+    - path: "{{ containerd_work_directory }}"
+      mode: "0700"
 
 - name: Provision containerd config file
   ansible.builtin.template:

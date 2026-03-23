@@ -1,7 +1,6 @@
 ansible-core<2.20
 ansible-lint==26.3.0
 coverage==7.6.1
-docker-image-py  # required by vexxhost.containers.containerd
 flake8
 jmespath
 molecule==26.3.0

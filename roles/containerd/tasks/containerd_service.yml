@@ -12,40 +12,39 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-- name: Provision systemd service
-  block:
-    # NOTE: This is more efficient way for systemd configuration, but we can't pull
-    #       in a standalone role with collection as of today. So fallback to manual
-    #       systemd config if role is absent.
-    # noqa: ansible-lintvar-naming[no-role-prefix]
-    - name: Configure containerd as a systemd service
-      ansible.builtin.include_role:
-        name: systemd_service
-      vars:
-        systemd_services:
-          - service_name: containerd
-            service_type: notify
-            enabled: true
-            state: started
-            execstarts: "/usr/bin/containerd --config {{ containerd_config_file }}"
-            config_overrides: "{{ containerd_service_default_init | combine(containerd_service_init_overrides, recursive=True) }}"
-            program_accounting: "{{ containerd_service_resource_control }}"
-      tags:
-        - skip_ansible_lint
-      ignore_errors: true
-      register: _systemd_service_include
+# NOTE: This is more efficient way for systemd configuration, but we can't pull
+#       in a standalone role with collection as of today. So fallback to manual
+#       systemd config if role is absent.
+# NOTE: Due to a bug in Ansible (https://github.com/ansible/ansible/issues/86721),
+#       we can not have block/rescue here and fallback.
+# - name: Configure containerd as a systemd service
+#   ansible.builtin.include_role:
+#     name: systemd_service
+#   vars:
+#     systemd_services:
+#       - service_name: containerd
+#         service_type: notify
+#         enabled: true
+#         state: started
+#         execstarts: "/usr/bin/containerd --config {{ containerd_config_file }}"
+#         environment_file: "{{ _containerd_environment_location_mapping[ansible_facts['os_family'] | lower] }}"
+#         config_overrides: "{{ containerd_service_default_init | combine(containerd_service_init_overrides, recursive=True) }}"
+#         program_accounting: "{{ containerd_service_resource_control }}"
+#   tags:
+#     - skip_ansible_lint
 
-  rescue:
-    - name: Provision containerd unit files
-      ansible.builtin.template:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        mode: "0644"
-      loop:
-        - src: containerd.tmpfiles.j2
-          dest: /etc/tmpfiles.d/containerd.conf
-        - src: containerd.service.j2
-          dest: /etc/systemd/system/containerd.service
-      notify:
-        - Reload systemd
-        - Restart containerd
+- name: Provision containerd service configuration
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - src: containerd.tmpfiles.j2
+      dest: /etc/tmpfiles.d/containerd.conf
+    - src: containerd.service.j2
+      dest: /etc/systemd/system/containerd.service
+    - src: containerd.env.j2
+      dest: "{{ _containerd_environment_location_mapping[ansible_facts['os_family'] | lower] }}"
+  notify:
+    - Reload systemd
+    - Restart containerd

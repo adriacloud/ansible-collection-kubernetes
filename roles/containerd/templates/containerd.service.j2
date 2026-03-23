@@ -13,9 +13,10 @@ TimeoutSec = 120
 Restart = on-failure
 RestartSec = 2
 Slice = system.slice
+EnvironmentFile={{ _containerd_environment_location_mapping[ansible_facts['os_family'] | lower] }}
 
 {% for key, value in containerd_service_resource_control.items() %}
-key=value
+{{ key }}={{ value }}
 {% endfor %}
 
 PrivateTmp = False

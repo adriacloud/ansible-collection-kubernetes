@@ -42,22 +42,23 @@ containerd_runc_download_checksum: "sha256:{{ containerd_runc_baseurl }}/release
 containerd_runc_download_dest: /usr/bin/runc
 containerd_runc_download_url: "{{ containerd_runc_baseurl }}/releases/download/v{{ containerd_runc_version }}/runc.{{ defaults_goarch }}"
 
+# Used to define environment variable as key/values for systemd unit file
+containerd_service_environment: {}
+
 containerd_service_resource_control:
   LimitNPROC: infinity
   LimitCORE: infinity
   LimitMEMLOCK: infinity
   TasksMax: infinity
 
-containerd_service_default_init:
-  Service:
-    KillMode: process
+# NOTE: eligible only for systemd_service role
+# containerd_service_default_init:
+#   Service:
+#     KillMode: process
 
-containerd_service_init_overrides: {}
+# containerd_service_init_overrides: {}
 
 containerd_snapshotter: overlayfs
 containerd_snapshotter_platform: ""
-
-containerd_systemd_role_url: https://opendev.org/openstack/ansible-role-systemd_service
-containerd_systemd_role_sha: master
 
 containerd_work_directory: /var/lib/containerd

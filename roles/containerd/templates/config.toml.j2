@@ -27,6 +27,8 @@ state = "{{ containerd_run_directory }}"
 {% else %}
   [plugins."io.containerd.cri.v1"]
     sandbox_image = "{{ containerd_pause_image | adriacloud.kubernetes.docker_image('ref') }}"
+  [plugins."io.containerd.cri.v1".containerd.runtimes.runc]
+    runtime_type = "io.containerd.runc.v2"
   [plugins."io.containerd.cri.v1".registry]
     config_path = "/etc/containerd/certs.d"
   [plugins."io.containerd.cri.v1.images"]
