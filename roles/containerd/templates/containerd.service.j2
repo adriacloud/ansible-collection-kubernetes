@@ -1,0 +1,28 @@
+# {{ ansible_managed }}
+[Unit]
+Description = containerd service
+After = network-online.target
+After = syslog.target
+
+[Service]
+Type = notify
+User = root
+Group = root
+ExecStart = /usr/bin/containerd --config {{ containerd_config_file }}
+TimeoutSec = 120
+Restart = on-failure
+RestartSec = 2
+Slice = system.slice
+
+{% for key, value in containerd_service_resource_control.items() %}
+key=value
+{% endfor %}
+
+PrivateTmp = False
+PrivateDevices = False
+PrivateNetwork = False
+PrivateUsers = False
+KillMode = process
+
+[Install]
+WantedBy = multi-user.target

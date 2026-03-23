@@ -1,0 +1,5 @@
+---
+roles:
+  - name: systemd_service
+    src: git+https://opendev.org/openstack/ansible-role-systemd_service
+    version: master

@@ -1,0 +1,63 @@
+---
+# Copyright (c) 2026 Adria Cloud Services.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+containerd_version: 2.2.2
+containerd_runc_version: 1.4.1
+containerd_pause_image_tag: 3.10
+
+containerd_baseurl: https://github.com/containerd/containerd
+
+containerd_config_file: /etc/containerd/config.toml
+
+containerd_download_checksum: >-
+  sha256:{{ containerd_baseurl }}/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ defaults_goarch }}.tar.gz.sha256sum
+containerd_download_dest: "/var/lib/downloads/containerd-{{ containerd_version }}-linux-{{ defaults_goarch }}.tar.gz"
+containerd_download_url: >-
+  {{ containerd_baseurl }}/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ defaults_goarch }}.tar.gz
+
+containerd_insecure_registries: []
+
+containerd_log_format: text
+containerd_log_level: "{{ (debug | default(true) | bool) | ternary('debug', 'info') }}"
+containerd_log_socket: /run/containerd/debug.sock
+
+containerd_pause_image: "registry.k8s.io/pause:{{ containerd_pause_image_tag }}"
+
+containerd_run_directory: /run/containerd
+
+containerd_runc_baseurl: https://github.com/opencontainers/runc
+containerd_runc_download_checksum: "sha256:{{ containerd_runc_baseurl }}/releases/download/v{{ containerd_runc_version }}/runc.sha256sum"
+containerd_runc_download_dest: /usr/bin/runc
+containerd_runc_download_url: "{{ containerd_runc_baseurl }}/releases/download/v{{ containerd_runc_version }}/runc.{{ defaults_goarch }}"
+
+containerd_service_resource_control:
+  LimitNPROC: infinity
+  LimitCORE: infinity
+  LimitMEMLOCK: infinity
+  TasksMax: infinity
+
+containerd_service_default_init:
+  Service:
+    KillMode: process
+
+containerd_service_init_overrides: {}
+
+containerd_snapshotter: overlayfs
+containerd_snapshotter_platform: ""
+
+containerd_systemd_role_url: https://opendev.org/openstack/ansible-role-systemd_service
+containerd_systemd_role_sha: master
+
+containerd_work_directory: /var/lib/containerd

@@ -1,0 +1,46 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Check if containerd binary exists
+      ansible.builtin.stat:
+        path: /usr/bin/containerd
+      register: containerd_binary
+
+    - name: Assert containerd binary exists and is executable
+      ansible.builtin.assert:
+        that:
+          - containerd_binary.stat.exists
+          - containerd_binary.stat.executable
+
+    - name: Check if configuration file exists
+      ansible.builtin.stat:
+        path: /etc/containerd/config.toml
+      register: containerd_config
+
+    - name: Assert configuration file exists
+      ansible.builtin.assert:
+        that:
+          - containerd_config.stat.exists
+
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+
+    - name: Assert containerd service is running and enabled
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['containerd.service'] is defined
+          - ansible_facts.services['containerd.service'].state == 'running'
+          - ansible_facts.services['containerd.service'].status == 'enabled'
+
+    - name: Check containerd version output
+      ansible.builtin.command: containerd --version
+      changed_when: false
+      register: _containerd_fetched_version
+      failed_when: _containerd_fetched_version.rc != 0
+
+    - name: Assert containerd version is as expected
+      ansible.builtin.assert:
+        that:
+          - containerd_version in _containerd_fetched_version.stdout
