@@ -8,6 +8,27 @@ This is a forked version of [`vexxhost.kubernetes`](https://github.com/vexxhost/
 collection which is intended to be agnostic from Atmosphere implementation
 and contain playbooks and roles to deploy a generic Kubernetes cluster using Ansible.
 
+## Installing
+
+This collection is published to Ansible Galaxy, and can be installed as easily as running
+
+```console
+ansible-galaxy collection install adriacloud.kubernetes
+```
+
+If you want to install some specific version, or add collection to your `requirements.yml`,
+you can use the following record:
+
+```yaml
+---
+collections:
+  - name: https://github.com/adriacloud/ansible-collection-kubernetes
+    type: git
+    version: main
+```
+
+You can replace `main` with any commit SHA or tag.
+
 ## Contributing
 
 All contributions to the repository are warmly welcome. For testing we heavily rely on `tox`.
