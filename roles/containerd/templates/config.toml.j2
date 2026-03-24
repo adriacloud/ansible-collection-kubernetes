@@ -1,5 +1,6 @@
 # {{ ansible_managed }}
 version = 2
+address = "{{ containerd_run_socket }}"
 root = "{{ containerd_work_directory }}"
 state = "{{ containerd_run_directory }}"
 

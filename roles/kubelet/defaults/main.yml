@@ -65,11 +65,15 @@ kubelet_checksums:
 kubelet_download_url: >-
   https://dl.k8s.io/release/v{{ kubelet_version }}/bin/{{ ansible_facts['system'] | lower }}/{{ defaults_goarch }}/kubelet
 kubelet_download_dest: /usr/bin/kubelet
-kubelet_binary_checksum: "{{ kubelet_checksums[defaults_goarch][kubelet_version] }}"
+kubelet_binary_checksum: "sha256:{{ kubelet_checksums[defaults_goarch][kubelet_version] }}"
 
 # Allow usage of swap memory for the Kubelet
 # WARNING: Do not enable this unless you know what you are doing.
 kubelet_allow_unsafe_swap: false
+
+# List of packages to be installed as dependencies
+kubelet_packages: "{{ _kubelet_dependencies + _kubelet_cni_dependencies }}"
+kubelet_packages_state: "{{ package_state | default('present') }}"
 
 # List of sysctl parameters to set
 kubelet_sysctls:
@@ -87,9 +91,31 @@ kubelet_sysctls:
     value: 8192
   - name: fs.inotify.max_user_watches
     value: 1048576
+  - name: net.ipv6.conf.all.disable_ipv6
+    value: 0
+    set: true
 
-# CRI socket path
-kubelet_cri_socket: /run/containerd/containerd.sock
+# CRI related variables
+kubelet_cri_socket: "{{ defaults_containerd_socket | default('/run/containerd/containerd.sock') }}"
+kubelet_crictl_version: 1.35.0
+kubelet_crictl_url: >-
+  https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ kubelet_crictl_version
+    }}/crictl-v{{ kubelet_crictl_version }}-linux-{{ defaults_goarch }}.tar.gz
+kubelet_crictl_checksum: "sha256:{{ kubelet_crictl_url }}.sha256"
+kubelet_crictl_dest: "/var/lib/downloads/crictl-v{{ kubelet_crictl_version }}-linux-{{ defaults_goarch }}.tar.gz"
+
+# CNI related variables
+kubelet_cni_plugins_version: 1.9.1
+kubelet_cni_plugins_url: >-
+  https://github.com/containernetworking/plugins/releases/download/v{{ kubelet_cni_plugins_version
+    }}/cni-plugins-linux-{{ defaults_goarch }}-v{{ kubelet_cni_plugins_version }}.tgz
+kubelet_cni_plugins_checksum: "sha256:{{ kubelet_cni_plugins_url }}.sha256"
+kubelet_cni_plugins_archive_dest: "/var/lib/downloads/cni-plugins-linux-{{ defaults_goarch }}-v{{ kubelet_cni_plugins_version }}.tgz"
+kubelet_cni_kernel_modules:
+  - br_netfilter
+  - ip_tables
+  - ip6_tables
+  - nf_conntrack
 
 # Node IP address
 kubelet_node_ip: "{{ ansible_facts['default_ipv4'].address }}"

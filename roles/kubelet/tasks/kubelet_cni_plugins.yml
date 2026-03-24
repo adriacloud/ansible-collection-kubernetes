@@ -1,4 +1,5 @@
-# Copyright (c) 2023 VEXXHOST, Inc.
+---
+# Copyright (c) 2026 Adria Cloud Services
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -12,25 +13,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-galaxy_info:
-  author: VEXXHOST, Inc.
-  description: Ansible role for "kubelet"
-  license: Apache-2.0
-  min_ansible_version: 2.15.0
-  standalone: false
-  platforms:
-    - name: EL
-      versions:
-        - "9"
-        - "10"
-    - name: Ubuntu
-      versions:
-        - jammy
-        - noble
-    - name: Debian
-      versions:
-        - bookworm
-        - trixie
-
-dependencies:
-  - role: adriacloud.kubernetes.defaults
+- name: Enable kernel modules in runtime
+  community.general.modprobe:
+    name: "{{ item }}"
+    state: present
+    persistent: present
+  loop: "{{ kubelet_cni_kernel_modules }}"
