@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+debug: {{ debug | default(false) | bool }}
+image-endpoint: unix://{{ kubelet_cri_socket }}
+runtime-endpoint: unix://{{ kubelet_cri_socket }}
+timeout: 30

@@ -16,3 +16,15 @@
   ansible.builtin.systemd:
     daemon_reload: true
     daemon_reexec: true
+
+- name: Start noswap
+  ansible.builtin.service:
+    name: noswap
+    enabled: true
+    state: started
+
+- name: Restart kubelet
+  ansible.builtin.service:
+    name: kubelet
+    enabled: true
+    state: restarted

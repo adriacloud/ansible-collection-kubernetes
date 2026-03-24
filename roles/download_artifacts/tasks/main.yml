@@ -16,9 +16,13 @@
 - name: Create destination directories
   ansible.builtin.file:
     state: directory
-    path: "{{ item | dirname }}"
+    path: "{{ item }}"
     mode: "0755"
-  loop: "{{ download_artifacts_list | select | map(attribute='dest') }}"
+  loop: >-
+    {{
+      download_artifacts_list | select | map(attribute='dest') | map('dirname') +
+        download_artifacts_list | map(attribute='unarchive_dest', default='') | select
+    }}
 
 - name: Download artifacts from remote
   vars:

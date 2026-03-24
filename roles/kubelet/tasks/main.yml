@@ -21,139 +21,40 @@
     - "{{ ansible_facts['distribution'] | lower }}.yml"
     - "{{ ansible_facts['os_family'] | lower }}.yml"
 
-- name: Including download and install of kubelet
+- name: Install required packages
+  ansible.builtin.package:
+    name: "{{ kubelet_packages }}"
+    state: "{{ kubelet_packages_state }}"
+
+- name: Including download and install of kubelet and dependencies
   ansible.builtin.include_role:
     name: adriacloud.kubernetes.download_artifacts
   vars:
-    download_artifacts_list:
-      - url: "{{ kubelet_download_url }}"
-        dest: "{{ kubelet_download_dest }}"
-        checksum: "sha256:{{ kubelet_binary_checksum }}"
-        owner: root
-        group: root
-        mode: "0755"
+    download_artifacts_list: "{{ kubelet_download_artifacts }}"
 
-# NOTE(mnaser): Sometimes EL ships with coreutils, sometimes it ships
-#               with coreutils-single.  We need to ensure that we have
-#               coreutils installed.
-- name: Install coreutils
-  ansible.builtin.dnf:
-    name: coreutils
-    allowerasing: true
+- name: Include tasks for CNI plugins configuration
+  ansible.builtin.include_tasks:
+    file: kubelet_cni_plugins.yml
   when:
-    - ansible_facts['os_family'] == 'RedHat'
+    - kubelet_cni_plugins_version | length > 0
 
-# NOTE(mnaser): This is a list of packages that are needed for `kubeadm`
-#               validation.
-#
-# https://github.com/kubernetes/kubernetes/blob/v1.26.2/cmd/kubeadm/app/preflight/checks.go#L1027-L1040
-- name: Install additional packages
-  ansible.builtin.package:
-    name: "{{ kubelet_package_dependencies }}"
+- name: Include tasks for CRI tools configuration
+  ansible.builtin.include_tasks:
+    file: kubelet_cri_config.yml
+  when:
+    - kubelet_crictl_version | length > 0
 
 - name: Configure sysctl values
   ansible.posix.sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
+    sysctl_set: "{{ item.set | default(omit) }}"
     state: present
   loop: "{{ kubelet_sysctls }}"
 
-- name: Create folders for kubernetes configuration
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    mode: "0755"
-    owner: root
-  with_items:
-    - /etc/systemd/system/kubelet.service.d
-    - /etc/kubernetes
-    - /etc/kubernetes/manifests
-
-- name: Add kubelet systemd service config
-  ansible.builtin.template:
-    src: kubelet.service.j2
-    dest: /etc/systemd/system/kubelet.service
-    owner: root
-    group: root
-    mode: "0644"
-  notify:
-    - Reload systemd
-
-- name: Add kubeadm dropin for kubelet systemd service config
-  ansible.builtin.template:
-    src: 10-kubeadm.conf.j2
-    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    owner: root
-    group: root
-    mode: "0644"
-  notify:
-    - Reload systemd
-
-- name: Disable swap on the host
-  when: not kubelet_allow_unsafe_swap | bool
-  block:
-    - name: Check swap status
-      ansible.builtin.command: /sbin/swapon -s
-      changed_when: false
-      register: kubelet_swapon
-
-    - name: Disable swap
-      ansible.builtin.command: /sbin/swapoff -a
-      changed_when: true
-      ignore_errors: "{{ ansible_check_mode }}"
-      when:
-        - kubelet_swapon.stdout | length > 0
-
-    - name: Remove swapfile from /etc/fstab
-      ansible.posix.mount:
-        name: "{{ item }}"
-        fstype: swap
-        state: absent
-      with_items:
-        - swap
-        - none
-
-    - name: Create noswap systemd service config file
-      ansible.builtin.copy:
-        src: noswap.service
-        dest: /etc/systemd/system/noswap.service
-        owner: root
-        group: root
-        mode: "0644"
-      notify:
-        - Reload systemd
-
-    - name: Enable noswap service
-      ansible.builtin.service:
-        name: noswap
-        enabled: true
+- name: Import tasks for kubelet configuration
+  ansible.builtin.import_tasks:
+    file: kubelet_config.yml
 
 - name: Force any restarts if necessary
   ansible.builtin.meta: flush_handlers
-
-- name: Enable and start kubelet service
-  ansible.builtin.service:
-    name: kubelet
-    enabled: true
-    state: started
-
-- name: Ensure availability of dbus on Debian
-  ansible.builtin.package:
-    name: dbus
-    state: present
-  when:
-    - ansible_facts['os_family'] == 'Debian'
-
-- name: Configure short hostname
-  ansible.builtin.hostname:
-    name: "{{ kubelet_hostname }}"
-
-- name: Ensure hostname inside hosts file
-  ansible.builtin.lineinfile:
-    path: /etc/hosts
-    regexp: '^127\.0\.1\.1'
-    line: 127.0.1.1 {{ inventory_hostname }} {{ kubelet_hostname }}
-  # NOTE(mnaser): This is to allow our tests to run on Docker containers since
-  #               you cannot edit the `/etc/hosts` file.
-  when:
-    - ansible_connection != "community.docker.docker"

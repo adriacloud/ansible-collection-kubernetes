@@ -1,0 +1,13 @@
+---
+major_changes:
+  - Minimal version of `comminuty.general` collection required is 7.0.0
+  - Dependecy on `vexxhost.containers` has been completely removed
+  - The `kubelet` role has incorporated logic for CRI and CNI deployment
+    and configuration. Please, use variables `kubelet_crictl_version` and
+    `kubelet_cni_plugins_version` to define desired versions of tools.
+    If set to an empty string or null values, deployment of tools will be
+    skipped.
+minor_changes:
+  - Added variable `defaults_containerd_socket` with default value of
+   `/run/containerd/containerd.sock`. It is used in both `containerd` and
+   `kubelet` roles.

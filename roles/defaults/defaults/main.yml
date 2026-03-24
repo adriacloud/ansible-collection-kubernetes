@@ -19,3 +19,5 @@ defaults_goarch_mapping:
   armv7l: arm
 
 defaults_goarch: "{{ defaults_goarch_mapping.get(ansible_facts['architecture'], ansible_facts['architecture']) }}"
+
+defaults_containerd_socket: /run/containerd/containerd.sock

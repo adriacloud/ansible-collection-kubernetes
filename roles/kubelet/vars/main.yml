@@ -1,0 +1,50 @@
+---
+# Copyright (c) 2026 Adria Cloud Services
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+kubelet_download_artifacts: |-
+  {% set artifacts = kubelet_download_list %}
+  {% if kubelet_cni_plugins_version | length > 0 %}
+  {%   set _ = artifacts.extend(kubelet_cni_plugins_download_list) %}
+  {% endif %}
+  {% if kubelet_crictl_version | length > 0 %}
+  {%   set _ = artifacts.extend(kubelet_cri_download_list) %}
+  {% endif %}
+  {{ artifacts }}
+
+kubelet_download_list:
+  - url: "{{ kubelet_download_url }}"
+    dest: "{{ kubelet_download_dest }}"
+    checksum: "{{ kubelet_binary_checksum }}"
+    owner: root
+    group: root
+    mode: "0755"
+
+kubelet_cni_plugins_download_list:
+  - url: "{{ kubelet_cni_plugins_url }}"
+    dest: "{{ kubelet_cni_plugins_archive_dest }}"
+    checksum: "{{ kubelet_cni_plugins_checksum }}"
+    owner: root
+    group: root
+    unarchive: true
+    unarchive_dest: /opt/cni/bin
+
+kubelet_cri_download_list:
+  - url: "{{ kubelet_crictl_url }}"
+    dest: "{{ kubelet_crictl_dest }}"
+    checksum: "{{ kubelet_crictl_checksum }}"
+    owner: root
+    group: root
+    unarchive: true
+    unarchive_dest: /usr/bin

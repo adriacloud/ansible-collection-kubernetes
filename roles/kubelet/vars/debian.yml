@@ -1,9 +1,20 @@
-kubelet_package_dependencies:
+---
+# NOTE(mnaser): This is a list of packages that are needed for `kubeadm`
+#               validation.
+#
+# https://github.com/kubernetes/kubernetes/blob/v1.26.2/cmd/kubeadm/app/preflight/checks.go#L1027-L1040
+_kubelet_dependencies:
   - conntrack
   - coreutils
+  - dbus
   - ebtables
   - ethtool
   - iproute2
   - mount
   - socat
   - util-linux
+
+_kubelet_cni_dependencies:
+  - iptables
+  - kmod
+  - udev

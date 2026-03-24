@@ -31,11 +31,12 @@ containerd_insecure_registries: []
 
 containerd_log_format: text
 containerd_log_level: "{{ (debug | default(true) | bool) | ternary('debug', 'info') }}"
-containerd_log_socket: /run/containerd/debug.sock
+containerd_log_socket: "{{ containerd_run_directory }}/debug.sock"
 
 containerd_pause_image: "registry.k8s.io/pause:{{ containerd_pause_image_tag }}"
 
-containerd_run_directory: /run/containerd
+containerd_run_socket: "{{ defaults_containerd_socket | default('/run/containerd/containerd.sock') }}"
+containerd_run_directory: "{{ containerd_run_socket | dirname }}"
 
 containerd_runc_baseurl: https://github.com/opencontainers/runc
 containerd_runc_download_checksum: "sha256:{{ containerd_runc_baseurl }}/releases/download/v{{ containerd_runc_version }}/runc.sha256sum"
