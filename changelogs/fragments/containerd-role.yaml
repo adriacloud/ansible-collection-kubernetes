@@ -1,0 +1,13 @@
+---
+major_changes:
+  - Role `vexxhost.containers.containerd` has been replaced with
+    `adriacloud.kubernetes.containerd`, which is included explicitly
+    in tasks and can accept a list of artifacts for download.
+
+minor_changes:
+  - Added role `adriacloud.kubernetes.containerd` which aims to replace
+    the `vexxhost.containers.containerd` role in the future.
+    While it maintains simmilar set of features, it has a series of significant
+    differences.
+    The role does not mandate a list of supported runc/containerd versions, and
+    any valid version set could be used freely.

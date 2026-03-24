@@ -1,0 +1,41 @@
+# {{ ansible_managed }}
+version = 2
+root = "{{ containerd_work_directory }}"
+state = "{{ containerd_run_directory }}"
+
+[debug]
+  level = "{{ containerd_log_level }}"
+
+[plugins]
+{% if containerd_version is version('2.0', '<') %}
+  [plugins."io.containerd.grpc.v1.cri"]
+    sandbox_image = "{{ containerd_pause_image | adriacloud.kubernetes.docker_image('ref') }}"
+
+  [plugins."io.containerd.grpc.v1.cri".registry]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+      {% for registry in containerd_insecure_registries %}
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."{{ registry }}"]
+        endpoint = ["http://{{ registry }}"]
+      {% endfor %}
+    [plugins."io.containerd.grpc.v1.cri".registry.configs]
+      {% for registry in containerd_insecure_registries %}
+      [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry }}".tls]
+        insecure_skip_verify = true
+      {% endfor %}
+  [plugins."io.containerd.grpc.v1.cri".containerd]
+    snapshotter = "{{ containerd_snapshotter }}"
+{% else %}
+  [plugins."io.containerd.cri.v1"]
+    sandbox_image = "{{ containerd_pause_image | adriacloud.kubernetes.docker_image('ref') }}"
+  [plugins."io.containerd.cri.v1".containerd.runtimes.runc]
+    runtime_type = "io.containerd.runc.v2"
+  [plugins."io.containerd.cri.v1".registry]
+    config_path = "/etc/containerd/certs.d"
+  [plugins."io.containerd.cri.v1.images"]
+    snapshotter = "{{ containerd_snapshotter }}"
+  {%   if containerd_snapshotter_platform | length > 0 %}
+  [[plugins."io.containerd.transfer.v1.local".unpack_config]]
+    platform = "{{ containerd_snapshotter_platform }}"
+    snapshotter = "{{ containerd_snapshotter }}"
+  {%   endif %}
+{% endif %}

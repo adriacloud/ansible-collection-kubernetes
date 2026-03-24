@@ -4,10 +4,6 @@ At the moment, the collection does not have a playbook to allow for automatic
 detection of the current version and upgrade to the latest version.  In the
 meantime, upgrades need to be done manually.
 
-For the following steps, please make sure to select the "Playbooks" tab if you
-used the playbooks directly and "Atmosphere" if you are using this collection
-as part of the Atmosphere deployment.
-
 !!! warning
 
     All of the commands below include both `--check` and `--diff` flags, you
@@ -19,8 +15,8 @@ cluster is still functional after each step.
 
 !!! warning
 
-    These instructions have been validated for the 1.5.2 release of the
-    collection (which ships in Atmosphere 1.5.1).
+    These instructions have been validated for the pre-forked release of the
+    collection!
 
 ## Control plane infrastructure + `containerd`
 
@@ -40,45 +36,14 @@ cluster is still functional after each step.
       hosts: "{{ kubernetes_control_plane_group | default('controllers') }}"
       become: true
       roles:
-        - role: vexxhost.kubernetes.keepalived
-        - role: vexxhost.kubernetes.haproxy
+        - role: adriacloud.kubernetes.keepalived
+        - role: adriacloud.kubernetes.haproxy
 
     - name: Install Kubernetes
       hosts: "{{ kubernetes_group | default('all') }}"
       become: true
       roles:
-        - role: vexxhost.containers.containerd
-    END
-    ```
-
-=== "Atmosphere"
-
-    ``` bash
-    ansible-playbook -i inventory/hosts.ini --check --diff /dev/stdin <<END
-    ---
-    - name: Configure Kubernetes VIP
-      hosts: "{{ kubernetes_control_plane_group | default('controllers') }}"
-      become: true
-      roles:
-        - role: vexxhost.atmosphere.defaults
-        - role: vexxhost.kubernetes.keepalived
-          vars:
-            keepalived_image: "{{ atmosphere_images['keepalived'] }}"
-            keepalived_vrid: "{{ kubernetes_keepalived_vrid }}"
-            keepalived_interface: "{{ kubernetes_keepalived_interface }}"
-            keepalived_vip: "{{ kubernetes_keepalived_vip }}"
-        - role: vexxhost.kubernetes.haproxy
-          vars:
-            haproxy_image: "{{ atmosphere_images['haproxy'] }}"
-
-    - name: Install Kubernetes
-      hosts: "{{ kubernetes_group | default('all') }}"
-      become: true
-      roles:
-        - role: vexxhost.atmosphere.defaults
-        - role: vexxhost.containers.containerd
-          vars:
-            containerd_pause_image: "{{ atmosphere_images['pause'] }}"
+        - role: adriacloud.kubernetes.containerd
     END
     ```
 
@@ -110,76 +75,15 @@ in `inventory/group_vars/kubernetes.yml` before running the steps below.
       hosts: "{{ kubernetes_group | default('all') }}"
       become: true
       roles:
-        - role: vexxhost.kubernetes.kubeadm
+        - role: adriacloud.kubernetes.kubeadm
           vars:
             kubeadm_version: "{{ kubernetes_version }}"
-        - role: vexxhost.kubernetes.kubectl
+        - role: adriacloud.kubernetes.kubectl
           vars:
             kubectl_version: "{{ kubernetes_version }}"
-        - role: vexxhost.kubernetes.kubelet
+        - role: adriacloud.kubernetes.kubelet
           vars:
             kubelet_version: "{{ kubernetes_version }}"
-
-    - name: Run the control plane upgrade
-      hosts: "{{ kubernetes_control_plane_group | default('controllers') }}"
-      become: true
-      tasks:
-        - name: Run "kubeadm upgrade plan"
-          changed_when: false
-          ansible.builtin.shell: kubeadm upgrade plan
-          when: ansible_play_hosts[0] == inventory_hostname
-
-        - name: Run "kubeadm upgrade apply"
-          changed_when: false
-          ansible.builtin.shell: kubeadm upgrade apply v{{ kubernetes_version }} --yes
-          when: ansible_play_hosts[0] == inventory_hostname
-
-        - name: Run "kubeadm upgrade node" on other controllers
-          changed_when: false
-          throttle: 1
-          ansible.builtin.shell: kubeadm upgrade node
-          when: ansible_play_hosts[0] != inventory_hostname
-
-    # TODO: upgrade CNI
-
-    - name: Run the "kubelet" upgrade
-      hosts: "{{ kubernetes_group | default('all') }}"
-      become: true
-      tasks:
-        - name: Run "kubeadm upgrade node"
-          changed_when: false
-          ansible.builtin.shell: kubeadm upgrade node
-
-        - name: Restart "kubelet"
-          ansible.builtin.service:
-            name: kubelet
-            state: restarted
-    END
-    ```
-
-=== "Atmosphere"
-
-    ``` bash
-    ansible-playbook -i inventory/hosts.ini /dev/stdin <<END
-    ---
-    # helm upgrade --values /tmp/mariadb.yml mariadb openstack-helm-infra/mariadb
-    # TODO: fix https://github.com/kubernetes/ingress-nginx/blob/712e10d4176da06e28a11eb6f9e2d7a263b887cb/rootfs/etc/nginx/template/nginx.tmpl#L1322
-
-    - name: Upgrade all packages
-      hosts: "{{ kubernetes_group | default('all') }}"
-      become: true
-      roles:
-        - role: vexxhost.atmosphere.defaults
-        - role: vexxhost.kubernetes.kubeadm
-          vars:
-            kubeadm_version: "{{ kubernetes_version }}"
-        - role: vexxhost.kubernetes.kubectl
-          vars:
-            kubectl_version: "{{ kubernetes_version }}"
-        - role: vexxhost.kubernetes.kubelet
-          vars:
-            kubelet_version: "{{ kubernetes_version }}"
-            containerd_pause_image: "{{ atmosphere_images['pause'] }}"
 
     - name: Run the control plane upgrade
       hosts: "{{ kubernetes_control_plane_group | default('controllers') }}"

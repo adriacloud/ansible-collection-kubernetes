@@ -16,7 +16,7 @@
   hosts: "{{ kubernetes_control_plane_group | default('controllers') }}"
   become: true
   roles:
-    - role: kube_vip
+    - role: adriacloud.kubernetes.kube_vip
       tags:
         - kube-vip
 
@@ -24,11 +24,11 @@
   hosts: "{{ kubernetes_group | default('all') }}"
   become: true
   roles:
-    - role: vexxhost.containers.containerd
+    - role: adriacloud.kubernetes.containerd
       tags:
         - containerd
 
-    - role: kubernetes
+    - role: adriacloud.kubernetes.kubernetes
       tags:
         - kubernetes
 
@@ -36,10 +36,10 @@
   hosts: "{{ kubernetes_control_plane_group | default('controllers') }}"
   become: true
   roles:
-    - role: helm
+    - role: adriacloud.kubernetes.helm
       tags:
         - helm
 
-    - role: cilium
+    - role: adriacloud.kubernetes.cilium
       tags:
         - cilium

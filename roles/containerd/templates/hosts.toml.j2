@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+server = "http://{{ registry }}"
+
+[host."http://{{ registry }}"]
+  capabilities = ["pull", "resolve"]
+  skip_verify = true

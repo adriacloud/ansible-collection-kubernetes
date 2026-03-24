@@ -69,7 +69,7 @@ jobs:
           CLUSTER_API_INFRA_VERSION: ${{ matrix.capo }}
           CLUSTER_API_OPENSTACK_CONTROLLER: ${{ matrix.orc }}
 
-  download_artifacts:
+  standalone_roles:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -95,6 +95,11 @@ jobs:
 
       - name: Run Tox
         run: tox -e molecule-artifacts
+        env:
+          MOLECULE_DISTRO: ${{ matrix.distro }}
+
+      - name: Run Tox
+        run: tox -e molecule-containerd
         env:
           MOLECULE_DISTRO: ${{ matrix.distro }}
 
