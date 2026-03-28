@@ -1,0 +1,85 @@
+---
+# Copyright (c) 2026 Adria Cloud Services.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+- name: Delegate Helm charts deployment to {{ helm_deploy_host }}
+  delegate_to: "{{ helm_deploy_host }}"
+  run_once: true
+  block:
+    - name: Upload Helm charts from Ansible controller
+      ansible.builtin.include_role:
+        name: adriacloud.kubernetes.upload_helm_chart
+      vars:
+        _helm_deploy_upload_charts: "{{ helm_deploy_charts | selectattr('src', 'defined') }}"
+        upload_helm_chart_list: "{{ _helm_deploy_upload_charts }}"
+        upload_helm_chart_method: copy
+      when:
+        - _helm_deploy_upload_charts | length > 0
+
+    - name: Clone git repositories with Helm charts
+      ansible.builtin.git:
+        repo: "{{ chart_git['key'] }}"
+        dest: "{{ helm_deploy_git_clone_path }}/{{ chart_git['key'] | basename }}"
+        version: "{{ chart_git['value'] }}"
+        update: true
+        force: true
+      loop: "{{ helm_deploy_git_clone | dict2items }}"
+      loop_control:
+        loop_var: chart_git
+
+    - name: Add native helm repositories
+      vars:
+        ansible_python_interpreter: "{{ helm_deploy_python_interpreter }}"
+      kubernetes.core.helm_repository:
+        url: "{{ chart_repo['key'] }}"
+        name: "{{ chart_repo['value']['name'] }}"
+        kubeconfig: "{{ chart_repo['value']['kubeconfig'] }}"
+        username: "{{ chart_repo['value']['username'] }}"
+        password: "{{ chart_repo['value']['password'] }}"
+        insecure_skip_tls_verify: "{{ not chart_repo['value']['verify'] }}"
+        validate_certs: "{{ chart_repo['value']['verify'] }}"
+      loop: "{{ helm_deploy_repositories | dict2items }}"
+      loop_control:
+        loop_var: chart_repo
+
+    - name: Deploy Helm charts
+      vars:
+        ansible_python_interpreter: "{{ helm_deploy_python_interpreter }}"
+        _chart_ref: |-
+          {% if 'repo_url' in chart %}
+          {%   set ref = [chart.get('repo_name', chart['repo_url'] | basename), chart.get('ref', chart['name'])] | join('/') %}
+          {% elif 'git' in chart %}
+          {%   set ref = [helm_deploy_git_clone_path, chart['git'] | basename, chart.get('ref', chart['name'])] | join('/') %}
+          {% else %}
+          {%   set ref = chart.get('ref', omit) %}
+          {% endif %}
+          {{ ref }}
+      kubernetes.core.helm:
+        name: "{{ chart['name'] }}"
+        chart_ref: "{{ _chart_ref }}"
+        namespace: "{{ chart['namespace'] }}"
+        chart_version: "{{ chart['version'] | default(omit) }}"
+        create_namespace: true
+        kubeconfig: "{{ chart['kubeconfig'] | default('/etc/kubernetes/admin.conf') }}"
+        # NOTE: Module does not resolve default(omit) for  values and fails with "can't convert str to dict"
+        values: "{{ chart.get('values', {}) }}"
+        purge: "{{ chart['purge'] | default(omit) }}"
+        replace: "{{ chart['replace'] | default(omit) }}"
+        state: "{{ chart['state'] | default('present') }}"
+        validate_certs: "{{ chart.get('verify', true) }}"
+        insecure_skip_tls_verify: "{{ not chart.get('verify', true) }}"
+        update_repo_cache: true
+      loop: "{{ helm_deploy_charts }}"
+      loop_control:
+        loop_var: chart

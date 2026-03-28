@@ -1,0 +1,41 @@
+---
+# Copyright (c) 2026 Adria Cloud Services.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+helm_deploy_git_clone: |-
+  {% set repos = {} %}
+  {% for chart in helm_deploy_charts | selectattr('git', 'defined') %}
+  {%   if chart['git'] not in repos %}
+  {%     set _ = repos.update({chart['git']: chart.get('git_version', 'HEAD')}) %}
+  {%   endif %}
+  {% endfor %}
+  {{ repos }}
+
+helm_deploy_repositories: |-
+  {% set repos = {} %}
+  {% for chart in helm_deploy_charts | selectattr('repo_url', 'defined') %}
+  {%   if chart['repo_url'] not in repos %}
+  {%     set _ = repos.update({
+           chart['repo_url']: {
+             'name': chart.get('repo_name', chart['repo_url'] | basename),
+             'username': chart.get('repo_username', omit),
+             'password': chart.get('repo_password', omit),
+             'kubeconfig': chart.get('kubeconfig', '/etc/kubernetes/admin.conf'),
+             'verify': chart.get('verify', true),
+           }
+         })
+  %}
+  {%   endif %}
+  {% endfor %}
+  {{ repos }}
