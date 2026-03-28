@@ -18,10 +18,29 @@
   tasks:
     - name: Get the current Helm version
       ansible.builtin.command: helm version --client --short
-      register: helm_version
+      register: _helm_actual_version
+      changed_when: false
 
     - name: Assert Helm version
       ansible.builtin.assert:
         that:
-          - helm_version.stdout.startswith("v3.11.2")
+          - _helm_actual_version.stdout.startswith(helm_version)
         msg: "Helm version is not correct"
+
+    - name: Get the helm charts
+      ansible.builtin.command:
+        argv:
+          - helm
+          - list
+          - -n
+          - addon-namespace
+          - --no-headers
+          - --deployed
+      changed_when: false
+      register: _helm_charts_deployed
+
+    - name: Assert Helm Charts
+      ansible.builtin.assert:
+        that:
+          - _helm_charts_deployed.stdout_lines | select('search', '^cluster-api-addon-provider') | length > 0
+          - _helm_charts_deployed.stdout_lines | select('search', '^etcd-defrag') | length > 0

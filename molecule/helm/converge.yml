@@ -17,3 +17,4 @@
   become: true
   roles:
     - adriacloud.kubernetes.helm
+    - adriacloud.kubernetes.helm_deploy

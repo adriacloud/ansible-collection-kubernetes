@@ -1,0 +1,44 @@
+---
+# Copyright (c) 2026 Adria Cloud Services.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+helm_deploy_host_group: "{{ kubernetes_control_plane_group | default('controllers') }}"
+helm_deploy_host: "{{ groups[helm_deploy_host_group] | first }}"
+helm_deploy_python_interpreter: "{{ ansible_collection_kubernetes_target_venv | default('/usr') }}/bin/python3"
+helm_deploy_git_clone_path: /var/lib/downloads
+
+# List charts to upload and deploy
+# When `src` is defined, chart will be uploaded from the ansible controller first
+# When `git` is defined, repo will be cloned from git repository to helm_deploy_host.
+#   - A separate `git clone` process will be executed, if you want to use `helm repo add` use `repo_url` instead.
+#   - If multiple charts have the same git repository defined, git clone process will be executed only once.
+#   - ref should be defined relatively to the git repository
+#   - git_version must be the same for a repo
+# helm_deploy_charts:
+#   - name:
+#     git:
+#     git_version:
+#     namespace:
+#     kubeconfig:
+#     purge: false
+#     replace: false
+#     ref:
+#     repo_url:
+#     set_values:
+#     src:
+#     state: present
+#     values:
+#     verify:
+#     version:
+helm_deploy_charts: []
