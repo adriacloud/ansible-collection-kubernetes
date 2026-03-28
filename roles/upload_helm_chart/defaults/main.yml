@@ -13,3 +13,6 @@
 # under the License.
 
 upload_helm_chart_method: synchronize
+upload_helm_chart_list:
+  - src: "{{ upload_helm_chart_src }}"
+    dest: "{{ upload_helm_chart_dest }}"

@@ -7,6 +7,7 @@ dependencies:
   - role: adriacloud.kubernetes.upload_helm_chart
     vars:
       # with multi_copy
-      upload_helm_chart_src: "{{ test_relative_path }}"
-      upload_helm_chart_dest: /usr/local/src/chart-two
-      upload_helm_chart_method: copy
+      upload_helm_chart_list:
+        - src: "{{ test_relative_path }}"
+          dest: /usr/local/src/chart-two
+          method: copy
