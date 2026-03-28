@@ -22,8 +22,8 @@
   # NOTE(mnaser): https://github.com/ansible-collections/ansible.posix/issues/381
   #               https://github.com/ansible-collections/ansible.posix/pull/433
   adriacloud.kubernetes.synchronize:
-    src: "{{ upload_helm_chart_src }}"
-    dest: "{{ upload_helm_chart_dest }}"
+    src: "{{ chart['src'] }}"
+    dest: "{{ chart['dest'] }}"
     archive: false
     recursive: true
     checksum: true

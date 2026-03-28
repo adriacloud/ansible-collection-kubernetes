@@ -17,35 +17,34 @@
   block:
     - name: Ensure destination dir
       ansible.builtin.file:
-        path: "{{ upload_helm_chart_dest }}"
+        path: "{{ chart['dest'] }}"
         state: directory
         mode: "0755"
         owner: root
         group: root
 
-    - name: Upload helm chart with multi_copy # noqa: var-naming[no-role-prefix]
+    - name: Upload helm chart with multi_copy
       adriacloud.kubernetes.multi_copy:
-        src: "{{ upload_helm_chart_src }}"
-        dest: "{{ upload_helm_chart_dest }}"
+        src: "{{ chart['src'] }}"
+        dest: "{{ chart['dest'] }}"
         owner: root
         group: root
         mode: "0755"
         list_files: true
-      register: multi_copy
-      when: upload_helm_chart_method == 'copy'
+      register: _upload_helm_chart_multi_copy
 
-    - name: Find destination files # noqa: var-naming[no-role-prefix]
+    - name: Find destination files
       ansible.builtin.find:
-        paths: "{{ upload_helm_chart_dest }}"
+        paths: "{{ chart['dest'] }}"
         recurse: true
         hidden: true
-      register: destination_files
+      register: _upload_helm_chart_destination_files
 
     - name: Delete any destination files not in the sources
       vars:
-        s: "{{ multi_copy.files | map('regex_replace', '\\./', '/') }}"
-        d: "{{ destination_files.files | map(attribute='path') | map('regex_replace', upload_helm_chart_dest | realpath, '') }}"
+        s: "{{ _upload_helm_chart_multi_copy.files | map('regex_replace', '\\./', '/') }}"
+        d: "{{ _upload_helm_chart_destination_files.files | map(attribute='path') | map('regex_replace', chart['dest'] | realpath, '') }}"
       ansible.builtin.file:
-        path: "{{ upload_helm_chart_dest ~ item }}"
+        path: "{{ chart['dest'] ~ item }}"
         state: absent
       with_items: "{{ d | difference(s) }}"

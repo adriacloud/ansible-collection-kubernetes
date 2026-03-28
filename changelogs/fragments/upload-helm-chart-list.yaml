@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - Introduced variable `upload_helm_chart_list` which allows to accept a list
+    of helm charts to be copied by the role.
+    By default, the variable is populated from `upload_helm_chart_src` and
+    `upload_helm_chart_dest` for backwards compatability.
