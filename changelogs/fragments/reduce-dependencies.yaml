@@ -1,4 +1,0 @@
-minor_changes:
-  - Reduced amount of external dependenices, specifically on helper
-    roles from `vexxhost.containers` like `vexxhost.containers.package` and
-    `vexxhost.containers.directory`.
