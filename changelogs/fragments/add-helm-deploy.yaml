@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - Introduced a new helm_deploy role, which takes care of installing and deploying
+    helm charts to the deployed k8s cluster.

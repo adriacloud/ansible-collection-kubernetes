@@ -4,20 +4,55 @@
 dependency:
   name: galaxy
 driver:
-  name: default
-  options:
-    managed: False
-    ansible_connection_options:
-      ansible_become: "true"
-      ansible_connection: local
+  name: docker
 platforms:
-  - name: instance
+  - name: helm
+    image: geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2404}-ansible:latest
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    privileged: true
+    cgroupns_mode: host
+    pre_build_image: true
+    etc_hosts:
+      k8s: 172.17.0.100
+    environment:
+      container: docker
+    security_opts:
+      - apparmor=unconfined
+    volumes:
+      - /tmp/molecule/instance/containerd:/var/lib/containerd
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - /lib/modules:/lib/modules:ro
+      - /usr/src:/host_kernel_src:ro
+    groups:
+      - controllers
 provisioner:
   name: ansible
   config_options:
     connection:
       pipelining: true
     defaults:
-      callbacks_enabled: ansible.posix.profile_tasks
+      inject_facts_as_vars: false
+  lint:
+    name: ansible-lint
+  inventory:
+    group_vars:
+      all:
+        kubernetes_version: ${KUBERNETES_VERSION:-1.35.2}
+        helm_version: v3.20.0
+      controllers:
+        keepalived_interface: "{{ ansible_facts['default_ipv4'].interface }}"
+        keepalived_vip: 172.17.0.100
+        keepalived_vrid: 42
+        kubernetes_hostname: "{{ ansible_facts['default_ipv4'].address }}"
+        helm_deploy_charts:
+          - name: cluster-api-addon-provider
+            namespace: addon-namespace
+            repo_url: "https://azimuth-cloud.github.io/cluster-api-addon-provider"
+            version: "0.10.4"
+          - name: etcd-defrag
+            ref: charts/etcd-defrag
+            namespace: "addon-namespace"
+            git: "https://github.com/azimuth-cloud/capi-helm-charts"
+            git_version: "0.22.0"
 verifier:
   name: ansible

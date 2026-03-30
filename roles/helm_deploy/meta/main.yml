@@ -1,4 +1,5 @@
-# Copyright (c) 2023 VEXXHOST, Inc.
+---
+# Copyright (c) 2026 Adria Cloud Services
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -12,20 +13,22 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-- name: Ensure rsync is installed
-  ansible.builtin.package:
-    name: rsync
-    state: present
-
-- name: Upload Helm chart
-  run_once: true
-  # NOTE(mnaser): https://github.com/ansible-collections/ansible.posix/issues/381
-  #               https://github.com/ansible-collections/ansible.posix/pull/433
-  adriacloud.kubernetes.synchronize:
-    src: "{{ chart['src'] }}"
-    dest: "{{ chart['ref'] }}"
-    archive: false
-    recursive: true
-    checksum: true
-    delete: true
-    use_ssh_args: true
+galaxy_info:
+  author: Adria Cloud Services
+  description: Ansible role for "binary_download"
+  license: Apache-2.0
+  min_ansible_version: "2.9"
+  standalone: false
+  platforms:
+    - name: EL
+      versions:
+        - "9"
+        - "10"
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bookworm
+        - trixie
