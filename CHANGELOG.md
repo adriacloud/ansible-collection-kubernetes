@@ -2,17 +2,23 @@
 
 **Topics**
 
-- <a href="#v26-4-0">v26\.4\.0</a>
+- <a href="#v26-4-1">v26\.4\.1</a>
+    - <a href="#bugfixes">Bugfixes</a>
     - <a href="#major-changes">Major Changes</a>
     - <a href="#minor-changes">Minor Changes</a>
     - <a href="#breaking-changes--porting-guide">Breaking Changes / Porting Guide</a>
 - <a href="#v26-3-0">v26\.3\.0</a>
     - <a href="#minor-changes-1">Minor Changes</a>
     - <a href="#deprecated-features">Deprecated Features</a>
-    - <a href="#bugfixes">Bugfixes</a>
+    - <a href="#bugfixes-1">Bugfixes</a>
 
-<a id="v26-4-0"></a>
-## v26\.4\.0
+<a id="v26-4-1"></a>
+## v26\.4\.1
+
+<a id="bugfixes"></a>
+### Bugfixes
+
+* Fixed collection publishing to Galaxy by adding README\.md to newly added roles\.
 
 <a id="major-changes"></a>
 ### Major Changes
@@ -59,7 +65,7 @@
 * Collection no longer cleans\-up components\, if they were installed from system packages\.
 * Support for Debian 12 has been deprecated
 
-<a id="bugfixes"></a>
+<a id="bugfixes-1"></a>
 ### Bugfixes
 
 * Ensured\, that proper python interpreter is used\, when ansible\_collection\_kubernetes\_target\_venv is defined\.
