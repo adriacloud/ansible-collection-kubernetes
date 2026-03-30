@@ -21,7 +21,7 @@ releases:
       - k8s_1_35.yml
       - no_forget_package.yml
     release_date: '2026-03-11'
-  26.4.0:
+  26.4.1:
     changes:
       breaking_changes:
         - Role for ``flux`` deployment has been removed from the collection. It was
@@ -71,6 +71,9 @@ releases:
           compatability.
         - Reduced amount of external dependenices, specifically on helper roles from
           `vexxhost.containers` like `vexxhost.containers.package` and `vexxhost.containers.directory`.
+      bugfixes:
+        - Fixed collection publishing to Galaxy by adding README.md to newly added
+          roles.
     fragments:
       - add-helm-deploy.yaml
       - containerd-role.yaml
@@ -80,4 +83,5 @@ releases:
       - no-docker-image-py.yaml
       - reduce-dependencies.yaml
       - upload-helm-chart-list.yaml
+      - fix-galaxy-upload.yaml
     release_date: '2026-03-30'
