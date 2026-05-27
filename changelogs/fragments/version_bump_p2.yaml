@@ -3,3 +3,4 @@ minor_changes:
   - OpenStack resource controller has been updated to version 2.5.0
   - kube-vip was upgraded to version 1.1.2
   - crictl was upgraded to version 1.36.0
+  - cert-manager was upgraded to version 1.20.2

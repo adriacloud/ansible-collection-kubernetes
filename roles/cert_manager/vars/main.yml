@@ -15,8 +15,12 @@ _cert_manager_cert_host_path:
   redhat: /etc/pki/ca-trust/extracted/pem/
   debian: /etc/ssl/certs
 
+_cert_manager_startupapicheck_image: >-
+  {{ cert_manager_version is version('v1.15.0', '>=', version_type='loose') | ternary(cert_manager_image_startupapicheck, cert_manager_image_ctl) }}
+
 _cert_manager_helm_values:
-  installCRDs: true
+  crds:
+    enabled: true
   global:
     leaderElection:
       namespace: "{{ cert_manager_helm_release_namespace }}"
@@ -48,8 +52,8 @@ _cert_manager_helm_values:
   startupapicheck:
     nodeSelector: "{{ cert_manager_node_selector }}"
     image:
-      repository: "{{ cert_manager_image_cli | adriacloud.kubernetes.docker_image('name') }}"
-      tag: "{{ cert_manager_image_cli | adriacloud.kubernetes.docker_image('tag') }}"
+      repository: "{{ _cert_manager_startupapicheck_image | adriacloud.kubernetes.docker_image('name') }}"
+      tag: "{{ _cert_manager_startupapicheck_image | adriacloud.kubernetes.docker_image('tag') }}"
   acmesolver:
     image:
       repository: "{{ cert_manager_image_acmesolver | adriacloud.kubernetes.docker_image('name') }}"
