@@ -13,7 +13,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-containerd_version: 2.2.2
+containerd_version: 2.3.1
 containerd_runc_version: 1.4.1
 containerd_pause_image_tag: 3.10
 

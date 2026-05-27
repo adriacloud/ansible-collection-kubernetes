@@ -20,7 +20,7 @@
     download_artifacts_list:
       - url: "{{ kubeadm_download_url }}"
         dest: "{{ kubeadm_download_dest }}"
-        checksum: "sha256:{{ kubeadm_binary_checksum }}"
+        checksum: "{{ kubeadm_binary_checksum }}"
         owner: root
         group: root
         mode: '0755'
