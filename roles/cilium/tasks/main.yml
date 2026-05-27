@@ -21,12 +21,8 @@
   register: cilium_k8s_cluster_info
 
 - name: Deploy Helm chart
-  run_once: true
+  ansible.builtin.include_role:
+    name: adriacloud.kubernetes.helm_deploy
   vars:
-    ansible_python_interpreter: "{{ ansible_collection_kubernetes_target_venv | default('/usr') }}/bin/python3"
-  kubernetes.core.helm:
-    name: "{{ cilium_helm_release_name }}"
-    chart_ref: "{{ cilium_helm_chart_ref }}"
-    release_namespace: "{{ cilium_helm_release_namespace }}"
-    kubeconfig: /etc/kubernetes/admin.conf
-    values: "{{ lookup('ansible.builtin.template', 'values.yml.j2') | from_yaml | combine(cilium_helm_values, recursive=True) }}"
+    helm_deploy_python_interpreter: "{{ ansible_collection_kubernetes_target_venv | default('/usr') }}/bin/python3"
+    helm_deploy_charts: "{{ cilium_helm_charts }}"

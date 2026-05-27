@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-helm_version: v4.2.0
+helm_version: v3.20.0
 
 helm_download_url: "https://get.helm.sh/helm-{{ helm_version }}-{{ ansible_facts['system'] | lower }}-{{ defaults_goarch }}.tar.gz"
 helm_download_dest: "/var/lib/downloads/helm-{{ helm_version }}-{{ ansible_facts['system'] | lower }}-{{ defaults_goarch }}.tar.gz"

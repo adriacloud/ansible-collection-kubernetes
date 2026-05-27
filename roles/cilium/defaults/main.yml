@@ -1,9 +1,16 @@
+---
 cilium_helm_release_name: cilium
-cilium_helm_chart_path: "chart/"
-cilium_helm_chart_ref: /usr/local/src/cilium
-
 cilium_helm_release_namespace: kube-system
+cilium_helm_repo_url: https://helm.cilium.io/
 cilium_helm_values: {}
+cilium_version: v1.14.8
+cilium_node_image: "quay.io/cilium/cilium:{{ cilium_version }}"
+cilium_operator_image: "quay.io/cilium/operator-generic:{{ cilium_version }}"
 
-cilium_node_image: quay.io/cilium/cilium:v1.14.8@sha256:7fca3ba4b04af066e8b086b5c1a52e30f52db01ffc642e7db0a439514aed3ada
-cilium_operator_image: quay.io/cilium/operator-generic:v1.14.8@sha256:56d373c12483c09964a00a29246595917603a077a298aa90a98e4de32c86b7dc
+cilium_helm_charts:
+  - name: "{{ cilium_helm_release_name }}"
+    namespace: "{{ cilium_helm_release_namespace }}"
+    repo_name: "{{ cilium_helm_release_name }}"
+    repo_url: "{{ cilium_helm_repo_url }}"
+    version: "{{ cilium_version }}"
+    values: "{{ lookup('ansible.builtin.template', 'values.yml.j2') | from_yaml | combine(cilium_helm_values, recursive=True) }}"
