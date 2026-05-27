@@ -10,34 +10,24 @@ spec:
     - manager
     env:
     - name: port
-      value: "6443"
+      value: "{{ kube_vip_port }}"
     - name: vip_interface
       value: "{{ kube_vip_interface }}"
     - name: vip_cidr
-      value: "32"
+      value: "{{ kube_vip_cidr }}"
     - name: cp_enable
       value: "true"
     - name: cp_namespace
       value: kube-system
     - name: vip_ddns
-      value: "false"
+      value: "{{ kube_vip_ddns | lower }}"
+    - name: lb_enable
+      value: "{{ kube_vip_lb_enable | lower }}"
+    - name: lb_port
+      value: "{{ kube_vip_lb_port }}"
 {% if kube_vip_mode == "arp" %}
     - name: vip_arp
       value: "true"
-    - name: svc_enable
-      value: "true"
-    - name: svc_leasename
-      value: plndr-svcs-lock
-    - name: vip_leaderelection
-      value: "true"
-    - name: vip_leasename
-      value: plndr-cp-lock
-    - name: vip_leaseduration
-      value: "15"
-    - name: vip_renewdeadline
-      value: "10"
-    - name: vip_retryperiod
-      value: "2"
 {% elif kube_vip_mode == "bgp" %}
     - name: vip_arp
       value: "false"
@@ -76,11 +66,26 @@ spec:
       value:  "{{ kube_vip_bgp_sourceip }}"
 {% endif %}
 {% endif %}
+    - name: svc_enable
+      value: "{{ kube_vip_svc_enable | lower }}"
+    - name: svc_leasename
+      value: "{{ kube_vip_svc_leasename }}"
+    - name: vip_leaderelection
+      value: "{{ kube_vip_leaderelection | lower }}"
+    - name: vip_leasename
+      value: "{{ kube_vip_leasename }}"
+    - name: vip_leaseduration
+      value: "{{ kube_vip_leaseduration }}"
+    - name: vip_renewdeadline
+      value: "{{ kube_vip_renewdeadline }}"
+    - name: vip_retryperiod
+      value: "{{ kube_vip_retryperiod }}"
     - name: address
       value: "{{ kube_vip_address }}"
     - name: prometheus_server
-      value: :2112
+      value: "{{ kube_vip_prometheus_server }}"
     image: "{{ kube_vip_image | adriacloud.kubernetes.docker_image('ref') }}"
+    imagePullPolicy: IfNotPresent
     name: kube-vip
     resources: {}
     securityContext:

@@ -19,13 +19,49 @@ kube_vip_enabled: true
 kube_vip_control_plane_group: "{{ kubernetes_control_plane_group | default('controllers') }}"
 
 # Image to use for kube-vip
-kube_vip_image: ghcr.io/kube-vip/kube-vip:v0.6.4
+kube_vip_image: ghcr.io/kube-vip/kube-vip:v1.1.2
+
+# Port to use for kube-vip (typically the API server port)
+kube_vip_port: 6443
 
 # Interface to use for kube-vip
 kube_vip_interface: "{{ keepalived_interface | default(kubernetes_keepalived_interface) }}"
 
 # IP address to use for kube-vip
 kube_vip_address: "{{ keepalived_vip | default(kubernetes_keepalived_vip) }}"
+
+# CIDR to use for kube-vip
+kube_vip_cidr: 32
+
+# Enable DDNS for kube-vip
+kube_vip_ddns: false
+
+# Enable the internal load balancer (HAProxy replacement)
+kube_vip_lb_enable: false
+
+# Port to use for the internal load balancer
+kube_vip_lb_port: 6443
+
+# Enable leader election for the control plane VIP
+kube_vip_leaderelection: true
+
+# Lease name to use for control plane leader election
+kube_vip_leasename: plndr-cp-lock
+
+# Lease duration for leader election (seconds)
+kube_vip_leaseduration: 15
+
+# Renew deadline for leader election (seconds)
+kube_vip_renewdeadline: 10
+
+# Retry period for leader election (seconds)
+kube_vip_retryperiod: 2
+
+# Enable service load balancer functionality
+kube_vip_svc_enable: true
+
+# Lease name to use for service leader election
+kube_vip_svc_leasename: plndr-svcs-lock
 
 # VIP mode for kube-vip (valide options: arp or bgp)
 kube_vip_mode: arp
@@ -52,3 +88,9 @@ kube_vip_mode: arp
 
 # Determines which IP address BGP should peer from
 # kube_vip_bgp_sourceip: 192.168.0.2
+
+# Prometheus server address for metrics
+kube_vip_prometheus_server: :2112
+
+# Path to the kubeconfig file on the host
+kube_vip_kubeconfig_path: /etc/kubernetes/admin.conf

@@ -47,7 +47,7 @@ kubelet_sysctls:
 
 # CRI related variables
 kubelet_cri_socket: "{{ defaults_containerd_socket | default('/run/containerd/containerd.sock') }}"
-kubelet_crictl_version: 1.35.0
+kubelet_crictl_version: 1.36.0
 kubelet_crictl_url: >-
   https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ kubelet_crictl_version
     }}/crictl-v{{ kubelet_crictl_version }}-linux-{{ defaults_goarch }}.tar.gz
