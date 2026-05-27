@@ -36,7 +36,11 @@
     line: "source <(kubectl completion bash)"
     insertbefore: EOF
 
-# TODO(fitbeard): Move common system packages from all roles to dedicated role.
+- name: Remove conflicting packages
+  ansible.builtin.package:
+    name: "{{ kubernetes_distro_packages_remove | select }}"
+    state: absent
+
 - name: Install distro packages
   ansible.builtin.package:
     name: "{{ kubernetes_distro_packages_install | select }}"

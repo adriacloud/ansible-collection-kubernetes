@@ -52,10 +52,11 @@ kubernetes_pip_packages_venv:
   - pyyaml         # required for helm
 
 # Python packages to install
+kubernetes_use_venv: "{{ (ansible_collection_kubernetes_target_venv is defined and ansible_collection_kubernetes_target_venv | length > 0) }}"
 kubernetes_pip_packages_install: >-
   {{
     kubernetes_pip_packages_base +
-    (ansible_collection_kubernetes_target_venv is defined) | ternary(kubernetes_pip_packages_venv, []) +
+    kubernetes_use_venv | ternary(kubernetes_pip_packages_venv, []) +
     (kubernetes_pip_packages_extra | default([]))
   }}
 
@@ -75,7 +76,9 @@ kubernetes_distro_packages_venv:
 kubernetes_distro_packages_install: >-
   {{
     kubernetes_distro_packages_base +
-    (ansible_collection_kubernetes_target_venv is defined) | ternary(
+    kubernetes_use_venv | ternary(
       kubernetes_distro_packages_venv[ansible_facts['os_family'] | lower], kubernetes_distro_packages_no_venv) +
     kubernetes_distro_packages_extra | default([])
   }}
+
+kubernetes_distro_packages_remove: "{{ kubernetes_use_venv | ternary([], ['python3-yaml']) }}"
