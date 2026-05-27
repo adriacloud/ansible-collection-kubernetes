@@ -1,7 +1,7 @@
 ---
 namespace: adriacloud
 name: kubernetes
-version: 26.4.1
+version: 30.0.0-dev
 readme: README.md
 authors:
   - Mohammed Naser <mnaser@vexxhost.com>
