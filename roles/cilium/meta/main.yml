@@ -21,15 +21,11 @@ galaxy_info:
   platforms:
     - name: EL
       versions:
-        - "8"
-        - "9"
+        - "10"
     - name: Ubuntu
       versions:
-        - focal
         - jammy
-
-dependencies:
-  - role: upload_helm_chart
-    vars:
-      upload_helm_chart_src: "{{ cilium_helm_chart_path }}"
-      upload_helm_chart_dest: "{{ cilium_helm_chart_ref }}"
+        - noble
+    - name: Debian
+      versions:
+        - trixie

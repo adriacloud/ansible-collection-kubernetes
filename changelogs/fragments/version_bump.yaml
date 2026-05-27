@@ -5,4 +5,3 @@ minor_changes:
   - Default haproxy version has been updated from 2.5 to 3.2
   - Added support for clusterctl version 1.13.2
   - Default containerd version has been switched to 2.3.1
-  - Default Helm version was switched to 4.2.0
