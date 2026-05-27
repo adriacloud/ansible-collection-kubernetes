@@ -1,3 +1,4 @@
+---
 name: Publish to Ansible Galaxy
 
 on:
@@ -22,10 +23,26 @@ jobs:
       - name: Install ansible-core
         run: pip install ansible-core
 
+      - name: Update version in galaxy.yml
+        run: |
+          # Extract tag name, stripping 'v' prefix if present
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          VERSION="${TAG_NAME#v}"
+          sed -i "s/^version: .*/version: ${VERSION}/" galaxy.yml
+          echo "GALAXY_VERSION=${VERSION}" >> ${GITHUB_ENV}
+
       - name: Build Ansible Collection
         run: ansible-galaxy collection build
+
+      - name: Upload Artifact to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            adriacloud-kubernetes-${{ env.GALAXY_VERSION }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish Ansible Collection to Galaxy
         env:
           ANSIBLE_GALAXY_TOKEN: ${{ secrets.GALAXY_API_KEY }}
-        run: ansible-galaxy collection publish *.tar.gz --api-key $ANSIBLE_GALAXY_TOKEN
+        run: ansible-galaxy collection publish "adriacloud-kubernetes-${{ env.GALAXY_VERSION }}.tar.gz" --api-key "$ANSIBLE_GALAXY_TOKEN"
