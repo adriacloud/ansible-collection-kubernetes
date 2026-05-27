@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fixes a PIP installation conflict with PyYAML for k8s when virtualenv is not used.
