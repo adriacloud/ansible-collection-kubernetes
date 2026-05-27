@@ -1,0 +1,11 @@
+---
+breaking_changes:
+  - Helm chart for cert-manager is now being deployed from the remote source
+    using `adriacloud.kubernetes.helm_deploy` role.
+    You can override `cert_manager_helm_repo_url` variable or
+    `cert_manager_helm_charts` mapping as a whole to point to a local
+    mirror of the helm chart for offline deployments.
+minor_changes:
+  - Added variables `cert_manager_helm_repo_url`, `cert_manager_cli_version`,
+    `cert_manager_tools_version`, and `cert_manager_helm_charts` to control
+    the Helm chart location and definition for Cilium.
