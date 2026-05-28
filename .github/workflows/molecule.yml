@@ -29,19 +29,19 @@ jobs:
       matrix:
         include:
           - kubernetes: 1.35.2
-            capi: 1.12.3
-            capo: 0.14.1
-            orc: 2.4.0
+            capi: 1.13.2
+            capo: 0.14.4
+            orc: 2.5.0
             distro: rockylinux10
           - kubernetes: 1.35.2
-            capi: 1.12.3
-            capo: 0.14.1
-            orc: 2.4.0
+            capi: 1.13.2
+            capo: 0.14.4
+            orc: 2.5.0
             distro: ubuntu2404
           - kubernetes: 1.35.2
-            capi: 1.12.3
-            capo: 0.14.1
-            orc: 2.4.0
+            capi: 1.13.2
+            capo: 0.14.4
+            orc: 2.5.0
             distro: debian13
     steps:
       - name: Checkout project
