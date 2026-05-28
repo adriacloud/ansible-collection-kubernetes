@@ -4,7 +4,12 @@ image:
   useDigest: false
 hubble:
   enabled: false
+{% if cilium_operator_image | adriacloud.kubernetes.docker_image('tag') is version('v1.14.0', '<') %}
 tunnel: geneve
+{% else %}
+routingMode: tunnel
+tunnelProtocol: geneve
+{% endif %}
 tunnelPort: 6082
 operator:
   image:
@@ -21,4 +26,4 @@ ipam:
   operator:
     clusterPoolIPv4PodCIDRList:
       - "{{ cilium_ipv4_cidr | default('10.0.0.0/8') }}"
-upgradeCompatibility: "1.13"
+upgradeCompatibility: "{{ cilium_upgrade_compatibility }}"
