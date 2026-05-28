@@ -3,9 +3,10 @@ cilium_helm_release_name: cilium
 cilium_helm_release_namespace: kube-system
 cilium_helm_repo_url: https://helm.cilium.io/
 cilium_helm_values: {}
-cilium_version: v1.14.8
+cilium_version: v1.19.4
 cilium_node_image: "quay.io/cilium/cilium:{{ cilium_version }}"
-cilium_operator_image: "quay.io/cilium/operator-generic:{{ cilium_version }}"
+cilium_operator_image: "quay.io/cilium/operator:{{ cilium_version }}"
+cilium_upgrade_compatibility: 1.14
 
 cilium_helm_charts:
   - name: "{{ cilium_helm_release_name }}"
