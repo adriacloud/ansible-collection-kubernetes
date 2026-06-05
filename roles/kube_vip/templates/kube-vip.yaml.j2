@@ -99,6 +99,7 @@ spec:
   hostAliases:
   - hostnames:
     - kubernetes
+    - "{{ kubernetes_hostname | default('kubernetes') }}"
     ip: 127.0.0.1
   hostNetwork: true
   volumes:

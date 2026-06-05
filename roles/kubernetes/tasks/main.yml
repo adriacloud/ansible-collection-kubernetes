@@ -43,3 +43,7 @@
         template:
           spec:
             nodeSelector: "{{ kubernetes_coredns_node_selector }}"
+  register: kubernetes_coredns_node_selector_result
+  until: kubernetes_coredns_node_selector_result is not failed
+  retries: 15
+  delay: 5
