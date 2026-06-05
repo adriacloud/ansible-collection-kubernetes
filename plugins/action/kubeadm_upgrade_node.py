@@ -118,10 +118,24 @@ class ActionModule(ActionBase):
             result.update({"changed": False})
             return result
 
+        stat_ret = self._execute_module(
+            module_name="ansible.builtin.stat",
+            module_args={
+                "path": "/etc/kubernetes/super-admin.conf",
+            },
+            task_vars=task_vars,
+            tmp=tmp,
+        )
+        super_admin_exists = (
+            not stat_ret.get("failed")
+            and stat_ret.get("stat", {}).get("exists")
+        )
+        kubeconfig_arg = " --kubeconfig /etc/kubernetes/super-admin.conf" if super_admin_exists else ""
+
         ret = self._execute_module(
             module_name="ansible.builtin.command",
             module_args={
-                "_raw_params": "kubeadm upgrade node",
+                "_raw_params": f"kubeadm upgrade node{kubeconfig_arg}",
             },
             task_vars=task_vars,
             tmp=tmp,
