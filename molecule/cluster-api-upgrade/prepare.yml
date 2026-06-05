@@ -22,7 +22,8 @@
     - role: adriacloud.kubernetes.cert_manager
     - role: adriacloud.kubernetes.cluster_api
       vars:
-        clusterctl_version: 1.9.6
-        cluster_api_version: 1.9.6
+        clusterctl_version: 1.12.3
+        cluster_api_version: 1.12.3
         cluster_api_infrastructure_provider: openstack
         cluster_api_infrastructure_version: 0.12.2
+        cluster_api_openstack_controller_version: 2.3.3
