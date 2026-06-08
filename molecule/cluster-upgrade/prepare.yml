@@ -27,5 +27,6 @@
         kind: Node
         name: "{{ inventory_hostname_short }}"
         wait: true
+        wait_timeout: 600
         wait_condition:
           type: Ready

@@ -34,9 +34,12 @@
     - name: Get all nodes
       ansible.builtin.command: kubectl get nodes
       register: nodes
-      failed_when:
-        - nodes.rc != 0
-        - not(nodes.stdout.find('instance') != -1)
+      until:
+        - nodes.rc == 0
+        - nodes.stdout.find('NotReady') == -1
+        - nodes.stdout.find('instance') != -1
+      retries: 30
+      delay: 10
 
     - name: Print node list
       ansible.builtin.debug:

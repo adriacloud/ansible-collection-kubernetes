@@ -28,6 +28,8 @@ platforms:
       k8s: 172.17.0.100
     environment:
       container: docker
+    tmpfs:
+      - /var/lib/etcd:rw,noexec,nosuid,size=512m
     security_opts:
       - apparmor=unconfined
     volumes:

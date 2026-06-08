@@ -62,17 +62,41 @@
         key: node-role.kubernetes.io/control-plane
       - effect: NoSchedule
         key: node-role.kubernetes.io/master
+  register: kubernetes_allow_workload_result
+  until: kubernetes_allow_workload_result is not failed
+  retries: 15
+  delay: 5
+
 
 - name: Upgrade if necessary
   when:
     - kubernetes_upgrade_check_upgrade_required is defined
     - kubernetes_upgrade_check_upgrade_required | bool
   block:
+    - name: Check if super-admin.conf exists
+      ansible.builtin.stat:
+        path: /etc/kubernetes/super-admin.conf
+      register: kubernetes_stat_super_admin
+
+    - name: Set kubeadm kubeconfig path
+      ansible.builtin.set_fact:
+        kubernetes_kubeadm_kubeconfig: >-
+          {{ kubernetes_stat_super_admin.stat.exists |
+          ternary('/etc/kubernetes/super-admin.conf', '/etc/kubernetes/admin.conf') }}
+
     - name: Start an upgrade
       run_once: true
       changed_when: true
-      ansible.builtin.shell: |
-        kubeadm upgrade apply --v=5 --yes v{{ kubernetes_version }}
+      ansible.builtin.command:
+        argv:
+          - kubeadm
+          - upgrade
+          - apply
+          - --kubeconfig
+          - "{{ kubernetes_kubeadm_kubeconfig }}"
+          - --v=5
+          - "--yes"
+          - "v{{ kubernetes_version }}"
 
     - name: Check if the Kubernetes API services is up to date # noqa: var-naming[no-role-prefix]
       ansible.builtin.command:
@@ -84,6 +108,11 @@
     - name: Trigger an upgrade of the Kubernetes API services
       throttle: 1
       changed_when: true
-      ansible.builtin.shell: |
-        kubeadm upgrade node
+      ansible.builtin.command:
+        argv:
+          - kubeadm
+          - upgrade
+          - node
+          - --kubeconfig
+          - "{{ kubernetes_kubeadm_kubeconfig }}"
       when: kube_apiserver_version_check is failed
