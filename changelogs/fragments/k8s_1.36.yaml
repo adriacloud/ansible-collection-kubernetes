@@ -1,8 +1,0 @@
----
-release_summary:
-  - Default and supported versions of components were updated to latest
-    available versions.
-minor_changes:
-  - Default version of kubernetes was changed to 1.36
-deprecated_features:
-  - Kubernetes version 1.33 is no longer tested and it's support is deprecated

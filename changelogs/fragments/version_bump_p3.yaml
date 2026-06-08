@@ -1,4 +1,0 @@
----
-minor_changes:
-  - Added support for cluster-api version v1.13.2
-  - Added support for cluster-api-provider-openstack v0.14.4

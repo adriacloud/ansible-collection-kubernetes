@@ -1,6 +1,59 @@
 ---
 ancestor: null
 releases:
+  2026.6.0:
+    changes:
+      breaking_changes:
+        - Helm chart for cert-manager is now being deployed from the remote source
+          using `adriacloud.kubernetes.helm_deploy` role. You can override `cert_manager_helm_repo_url`
+          variable or `cert_manager_helm_charts` mapping as a whole to point to a
+          local mirror of the helm chart for offline deployments.
+        - Helm chart from cilium is now being deployed from the remote source using
+          `adriacloud.kubernetes.helm_deploy` role. You can override `cilium_helm_repo_url`
+          variable or `cilium_helm_charts` mapping as a whole to point to a local
+          mirror of the helm chart for offline deployments.
+      bugfixes:
+        - Fixes a PIP installation conflict with PyYAML for k8s when virtualenv is
+          not used.
+        - Fixes a race condition during control plane node joins where `kube-vip`
+          started up prematurely and bound the VIP address locally before `kubeadm
+          join` completed.
+        - Fixes authorization issues for `kube-vip` on secondary control plane nodes
+          in Kubernetes >= 1.29 by using `/etc/kubernetes/super-admin.conf` to bypass
+          RBAC during bootstrap.
+      deprecated_features:
+        - Kubernetes version 1.33 is no longer tested and it's support is deprecated
+      minor_changes:
+        - Added support for cluster-api version v1.13.2
+        - Added support for cluster-api-provider-openstack v0.14.4
+        - Added support for clusterctl version 1.13.2
+        - Added variables `cert_manager_helm_repo_url`, `cert_manager_cli_version`,
+          `cert_manager_tools_version`, and `cert_manager_helm_charts` to control
+          the Helm chart location and definition for Cilium.
+        - Added variables `cilium_helm_repo_url`, `cilium_version` and `cilium_helm_charts`
+          to control the Helm chart location and definition for Cilium.
+        - Default containerd version has been switched to 2.3.1
+        - Default haproxy version has been updated from 2.5 to 3.2
+        - Default version for OpenStack resource controller is set to 2.5.0
+        - Default version for cert-manager is set to 1.20.2
+        - Default version for cilium is set to 1.19.4
+        - Default version for crictl is set to 1.36.0
+        - Default version for kube-vip is set to 1.1.2
+        - Default version of kubernetes was changed to 1.36
+      release_summary: Default and supported versions of components were updated to
+        latest available versions. Versions for Helm, kubeadm, kubectl, kubelet, can
+        now be set to an arbitrary ones, without need to maintain a checksum matrix
+        separately.
+    fragments:
+      - cert_manager_helm_chart.yaml
+      - cilium_helm_chart.yaml
+      - k8s_1.36.yaml
+      - kube-vip-join-fix.yaml
+      - pip-k8s-pyaml-conflict.yaml
+      - version_bump.yaml
+      - version_bump_p2.yaml
+      - version_bump_p3.yaml
+    release_date: '2026-06-08'
   26.3.0:
     changes:
       bugfixes:
@@ -28,6 +81,9 @@ releases:
           not required for a kubernetes deployment, and goal of this collection is
           to perform a functional kubernetes cluster deployment, while management
           tools for these kubernetes clusters are left out of the collection scope.
+      bugfixes:
+        - Fixed collection publishing to Galaxy by adding README.md to newly added
+          roles.
       major_changes:
         - Dependecy on `vexxhost.containers` has been completely removed
         - Minimal version of `comminuty.general` collection required is 7.0.0
@@ -71,17 +127,14 @@ releases:
           compatability.
         - Reduced amount of external dependenices, specifically on helper roles from
           `vexxhost.containers` like `vexxhost.containers.package` and `vexxhost.containers.directory`.
-      bugfixes:
-        - Fixed collection publishing to Galaxy by adding README.md to newly added
-          roles.
     fragments:
       - add-helm-deploy.yaml
       - containerd-role.yaml
       - download-artifacts-role.yaml
       - drop-flux-role.yaml
+      - fix-galaxy-upload.yaml
       - kubelet-independent.yaml
       - no-docker-image-py.yaml
       - reduce-dependencies.yaml
       - upload-helm-chart-list.yaml
-      - fix-galaxy-upload.yaml
     release_date: '2026-03-30'
