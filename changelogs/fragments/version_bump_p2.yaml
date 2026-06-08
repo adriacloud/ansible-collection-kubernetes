@@ -1,7 +1,0 @@
----
-minor_changes:
-  - Default version for OpenStack resource controller is set to 2.5.0
-  - Default version for kube-vip is set to 1.1.2
-  - Default version for crictl is set to 1.36.0
-  - Default version for cert-manager is set to 1.20.2
-  - Default version for cilium is set to 1.19.4

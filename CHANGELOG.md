@@ -2,23 +2,67 @@
 
 **Topics**
 
-- <a href="#v26-4-1">v26\.4\.1</a>
-    - <a href="#bugfixes">Bugfixes</a>
-    - <a href="#major-changes">Major Changes</a>
+- <a href="#v2026-6-0">v2026\.6\.0</a>
+    - <a href="#release-summary">Release Summary</a>
     - <a href="#minor-changes">Minor Changes</a>
     - <a href="#breaking-changes--porting-guide">Breaking Changes / Porting Guide</a>
-- <a href="#v26-3-0">v26\.3\.0</a>
-    - <a href="#minor-changes-1">Minor Changes</a>
     - <a href="#deprecated-features">Deprecated Features</a>
+    - <a href="#bugfixes">Bugfixes</a>
+- <a href="#v26-4-1">v26\.4\.1</a>
+    - <a href="#major-changes">Major Changes</a>
+    - <a href="#minor-changes-1">Minor Changes</a>
+    - <a href="#breaking-changes--porting-guide-1">Breaking Changes / Porting Guide</a>
     - <a href="#bugfixes-1">Bugfixes</a>
+- <a href="#v26-3-0">v26\.3\.0</a>
+    - <a href="#minor-changes-2">Minor Changes</a>
+    - <a href="#deprecated-features-1">Deprecated Features</a>
+    - <a href="#bugfixes-2">Bugfixes</a>
 
-<a id="v26-4-1"></a>
-## v26\.4\.1
+<a id="v2026-6-0"></a>
+## v2026\.6\.0
+
+<a id="release-summary"></a>
+### Release Summary
+
+Default and supported versions of components were updated to latest available versions\. Versions for Helm\, kubeadm\, kubectl\, kubelet\, can now be set to an arbitrary ones\, without need to maintain a checksum matrix separately\.
+
+<a id="minor-changes"></a>
+### Minor Changes
+
+* Added support for cluster\-api version v1\.13\.2
+* Added support for cluster\-api\-provider\-openstack v0\.14\.4
+* Added support for clusterctl version 1\.13\.2
+* Added variables <em class="title-reference">cert\_manager\_helm\_repo\_url</em>\, <em class="title-reference">cert\_manager\_cli\_version</em>\, <em class="title-reference">cert\_manager\_tools\_version</em>\, and <em class="title-reference">cert\_manager\_helm\_charts</em> to control the Helm chart location and definition for Cilium\.
+* Added variables <em class="title-reference">cilium\_helm\_repo\_url</em>\, <em class="title-reference">cilium\_version</em> and <em class="title-reference">cilium\_helm\_charts</em> to control the Helm chart location and definition for Cilium\.
+* Default containerd version has been switched to 2\.3\.1
+* Default haproxy version has been updated from 2\.5 to 3\.2
+* Default version for OpenStack resource controller is set to 2\.5\.0
+* Default version for cert\-manager is set to 1\.20\.2
+* Default version for cilium is set to 1\.19\.4
+* Default version for crictl is set to 1\.36\.0
+* Default version for kube\-vip is set to 1\.1\.2
+* Default version of kubernetes was changed to 1\.36
+
+<a id="breaking-changes--porting-guide"></a>
+### Breaking Changes / Porting Guide
+
+* Helm chart for cert\-manager is now being deployed from the remote source using <em class="title-reference">adriacloud\.kubernetes\.helm\_deploy</em> role\. You can override <em class="title-reference">cert\_manager\_helm\_repo\_url</em> variable or <em class="title-reference">cert\_manager\_helm\_charts</em> mapping as a whole to point to a local mirror of the helm chart for offline deployments\.
+* Helm chart from cilium is now being deployed from the remote source using <em class="title-reference">adriacloud\.kubernetes\.helm\_deploy</em> role\. You can override <em class="title-reference">cilium\_helm\_repo\_url</em> variable or <em class="title-reference">cilium\_helm\_charts</em> mapping as a whole to point to a local mirror of the helm chart for offline deployments\.
+
+<a id="deprecated-features"></a>
+### Deprecated Features
+
+* Kubernetes version 1\.33 is no longer tested and it\'s support is deprecated
 
 <a id="bugfixes"></a>
 ### Bugfixes
 
-* Fixed collection publishing to Galaxy by adding README\.md to newly added roles\.
+* Fixes a PIP installation conflict with PyYAML for k8s when virtualenv is not used\.
+* Fixes a race condition during control plane node joins where <em class="title-reference">kube\-vip</em> started up prematurely and bound the VIP address locally before <em class="title-reference">kubeadm join</em> completed\.
+* Fixes authorization issues for <em class="title-reference">kube\-vip</em> on secondary control plane nodes in Kubernetes \>\= 1\.29 by using <em class="title-reference">/etc/kubernetes/super\-admin\.conf</em> to bypass RBAC during bootstrap\.
+
+<a id="v26-4-1"></a>
+## v26\.4\.1
 
 <a id="major-changes"></a>
 ### Major Changes
@@ -29,7 +73,7 @@
 * Role <em class="title-reference">vexxhost\.containers\.download\_artifact</em> has been replaced with <em class="title-reference">adriacloud\.kubernetes\.download\_artifacts</em>\, which is included explicitly in tasks and can accept a list of artifacts for download\.
 * The <em class="title-reference">kubelet</em> role has incorporated logic for CRI and CNI deployment and configuration\. Please\, use variables <em class="title-reference">kubelet\_crictl\_version</em> and <em class="title-reference">kubelet\_cni\_plugins\_version</em> to define desired versions of tools\. If set to an empty string or null values\, deployment of tools will be skipped\.
 
-<a id="minor-changes"></a>
+<a id="minor-changes-1"></a>
 ### Minor Changes
 
 * Added role <em class="title-reference">adriacloud\.kubernetes\.containerd</em> which aims to replace the <em class="title-reference">vexxhost\.containers\.containerd</em> role in the future\. While it maintains simmilar set of features\, it has a series of significant differences\. The role does not mandate a list of supported runc/containerd versions\, and any valid version set could be used freely\.
@@ -42,15 +86,20 @@
 * Introduced variable <em class="title-reference">upload\_helm\_chart\_list</em> which allows to accept a list of helm charts to be copied by the role\. By default\, the variable is populated from <em class="title-reference">upload\_helm\_chart\_src</em> and <em class="title-reference">upload\_helm\_chart\_dest</em> for backwards compatability\.
 * Reduced amount of external dependenices\, specifically on helper roles from <em class="title-reference">vexxhost\.containers</em> like <em class="title-reference">vexxhost\.containers\.package</em> and <em class="title-reference">vexxhost\.containers\.directory</em>\.
 
-<a id="breaking-changes--porting-guide"></a>
+<a id="breaking-changes--porting-guide-1"></a>
 ### Breaking Changes / Porting Guide
 
 * Role for <code>flux</code> deployment has been removed from the collection\. It was not required for a kubernetes deployment\, and goal of this collection is to perform a functional kubernetes cluster deployment\, while management tools for these kubernetes clusters are left out of the collection scope\.
 
+<a id="bugfixes-1"></a>
+### Bugfixes
+
+* Fixed collection publishing to Galaxy by adding README\.md to newly added roles\.
+
 <a id="v26-3-0"></a>
 ## v26\.3\.0
 
-<a id="minor-changes-1"></a>
+<a id="minor-changes-2"></a>
 ### Minor Changes
 
 * Added support for CAPO versions 0\.13\.4 and 0\.14\.1
@@ -59,13 +108,13 @@
 * Added support for clusterctl versions 1\.10\.10\, 1\.11\.6\, 1\.12\.3
 * Added support for kubernetes versions 1\.34\.5 and 1\.35\.2
 
-<a id="deprecated-features"></a>
+<a id="deprecated-features-1"></a>
 ### Deprecated Features
 
 * Collection no longer cleans\-up components\, if they were installed from system packages\.
 * Support for Debian 12 has been deprecated
 
-<a id="bugfixes-1"></a>
+<a id="bugfixes-2"></a>
 ### Bugfixes
 
 * Ensured\, that proper python interpreter is used\, when ansible\_collection\_kubernetes\_target\_venv is defined\.

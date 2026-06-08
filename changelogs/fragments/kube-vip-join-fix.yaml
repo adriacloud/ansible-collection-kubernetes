@@ -1,6 +1,0 @@
----
-bugfixes:
-  - Fixes a race condition during control plane node joins where `kube-vip` started up prematurely
-    and bound the VIP address locally before `kubeadm join` completed.
-  - Fixes authorization issues for `kube-vip` on secondary control plane nodes in Kubernetes >= 1.29
-    by using `/etc/kubernetes/super-admin.conf` to bypass RBAC during bootstrap.
