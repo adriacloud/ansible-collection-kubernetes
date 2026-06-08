@@ -12,6 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+- name: Wait for Kubernetes API server to be ready
+  ansible.builtin.uri:
+    url: "https://{{ kubernetes_hostname | default('k8s') }}:6443/readyz"
+    validate_certs: false
+    timeout: 5
+  register: _kubernetes_api_ready
+  until:
+    - _kubernetes_api_ready.status is defined
+    - _kubernetes_api_ready.status == 200
+  retries: 60
+  delay: 5
+
 - name: Generate control-plane certificates for joining cluster
   run_once: true
   delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
@@ -20,6 +32,35 @@
   register: kubernetes_kubeadm_init_upload_certs
   when:
     - inventory_hostname in groups[kubernetes_control_plane_group]
+
+- name: Copy super-admin.conf from bootstrap node
+  when:
+    - inventory_hostname in groups[kubernetes_control_plane_group]
+  block:
+    - name: Check if super-admin.conf exists on bootstrap node
+      run_once: true
+      delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
+      ansible.builtin.stat:
+        path: /etc/kubernetes/super-admin.conf
+      register: kubernetes_bootstrap_super_admin_stat
+
+    - name: Copy super-admin.conf from bootstrap node to joining control-plane nodes
+      delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
+      ansible.builtin.slurp:
+        src: /etc/kubernetes/super-admin.conf
+      register: kubernetes_super_admin_file
+      when:
+        - kubernetes_bootstrap_super_admin_stat.stat.exists
+
+    - name: Write super-admin.conf to joining control-plane nodes
+      ansible.builtin.copy:
+        content: "{{ kubernetes_super_admin_file.content | b64decode }}"
+        dest: /etc/kubernetes/super-admin.conf
+        owner: root
+        group: root
+        mode: "0600"
+      when:
+        - kubernetes_bootstrap_super_admin_stat.stat.exists
 
 - name: Retrieve SHA256 certificate hash
   run_once: true
@@ -53,3 +94,7 @@
     PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   args:
     creates: /etc/kubernetes/kubelet.conf
+
+- name: Configure kube-vip on the joined control plane node
+  ansible.builtin.import_role:
+    name: adriacloud.kubernetes.kube_vip

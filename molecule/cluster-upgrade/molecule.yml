@@ -29,7 +29,7 @@ platforms:
     environment:
       container: docker
     tmpfs:
-      - /var/lib/etcd:rw,noexec,nosuid,size=128m
+      - /var/lib/etcd:rw,noexec,nosuid,size=512m
     security_opts:
       - apparmor=unconfined
     volumes:
