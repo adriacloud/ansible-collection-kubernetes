@@ -113,5 +113,6 @@ spec:
 {% else %}
       path: "{{ kube_vip_kubeconfig_path }}"
 {% endif %}
+      type: FileOrCreate
     name: kubeconfig
 status: {}

@@ -67,7 +67,6 @@
   retries: 15
   delay: 5
 
-
 - name: Upgrade if necessary
   when:
     - kubernetes_upgrade_check_upgrade_required is defined
@@ -115,4 +114,8 @@
           - node
           - --kubeconfig
           - "{{ kubernetes_kubeadm_kubeconfig }}"
+      register: _kubernetes_trigger_upgrade
+      until: _kubernetes_trigger_upgrade is not failed
+      retries: 3
+      delay: 5
       when: kube_apiserver_version_check is failed
