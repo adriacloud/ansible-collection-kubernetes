@@ -132,14 +132,21 @@ class ActionModule(ActionBase):
         )
         kubeconfig_arg = " --kubeconfig /etc/kubernetes/super-admin.conf" if super_admin_exists else ""
 
-        ret = self._execute_module(
-            module_name="ansible.builtin.command",
-            module_args={
-                "_raw_params": f"kubeadm upgrade node{kubeconfig_arg}",
-            },
-            task_vars=task_vars,
-            tmp=tmp,
-        )
+        attempts = 3
+        while attempts > 0:
+            ret = self._execute_module(
+                module_name="ansible.builtin.command",
+                module_args={
+                    "_raw_params": f"kubeadm upgrade node{kubeconfig_arg}",
+                },
+                task_vars=task_vars,
+                tmp=tmp,
+            )
+            if not ret.get("failed"):
+                break
+            attempts -= 1
+            if attempts > 0:
+                time.sleep(5)
 
         if ret.get("failed"):
             result.update(ret)
