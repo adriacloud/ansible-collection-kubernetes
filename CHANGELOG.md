@@ -2,7 +2,7 @@
 
 **Topics**
 
-- <a href="#v2026-6-0">v2026\.6\.0</a>
+- <a href="#v26-6-0">v26\.6\.0</a>
     - <a href="#release-summary">Release Summary</a>
     - <a href="#minor-changes">Minor Changes</a>
     - <a href="#breaking-changes--porting-guide">Breaking Changes / Porting Guide</a>
@@ -18,8 +18,8 @@
     - <a href="#deprecated-features-1">Deprecated Features</a>
     - <a href="#bugfixes-2">Bugfixes</a>
 
-<a id="v2026-6-0"></a>
-## v2026\.6\.0
+<a id="v26-6-0"></a>
+## v26\.6\.0
 
 <a id="release-summary"></a>
 ### Release Summary
