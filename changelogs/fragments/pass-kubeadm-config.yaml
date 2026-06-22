@@ -1,0 +1,7 @@
+---
+bugfixes:
+  - Cluster init for kubernetes >=1.36 when nodes has multiple interfaces
+    and they are not using a default interface for communication.
+    As a fix we pass the --config option to kubeadm command. This
+    is a generic expectation according to
+    https://github.com/kubernetes/kubeadm/issues/3313

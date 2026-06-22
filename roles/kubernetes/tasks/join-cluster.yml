@@ -24,10 +24,33 @@
   retries: 60
   delay: 5
 
+- name: Check if super-admin.conf exists on bootstrap node
+  run_once: true
+  delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
+  ansible.builtin.stat:
+    path: /etc/kubernetes/super-admin.conf
+  register: kubernetes_bootstrap_super_admin_stat
+
+- name: Set kubeadm kubeconfig path
+  ansible.builtin.set_fact:
+    kubernetes_kubeadm_kubeconfig: >-
+      {{ kubernetes_bootstrap_super_admin_stat.stat.exists |
+         ternary('/etc/kubernetes/super-admin.conf', '/etc/kubernetes/admin.conf') }}
+
 - name: Generate control-plane certificates for joining cluster
   run_once: true
   delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
-  ansible.builtin.command: kubeadm init phase upload-certs --upload-certs
+  ansible.builtin.command:
+    argv:
+      - kubeadm
+      - init
+      - phase
+      - upload-certs
+      - --upload-certs
+      - --config
+      - /etc/kubernetes/kubeadm.yaml
+      - --kubeconfig
+      - "{{ kubernetes_kubeadm_kubeconfig }}"
   changed_when: false
   register: kubernetes_kubeadm_init_upload_certs
   when:
@@ -36,21 +59,13 @@
 - name: Copy super-admin.conf from bootstrap node
   when:
     - inventory_hostname in groups[kubernetes_control_plane_group]
+    - kubernetes_bootstrap_super_admin_stat.stat.exists
   block:
-    - name: Check if super-admin.conf exists on bootstrap node
-      run_once: true
-      delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
-      ansible.builtin.stat:
-        path: /etc/kubernetes/super-admin.conf
-      register: kubernetes_bootstrap_super_admin_stat
-
     - name: Copy super-admin.conf from bootstrap node to joining control-plane nodes
       delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
       ansible.builtin.slurp:
         src: /etc/kubernetes/super-admin.conf
       register: kubernetes_super_admin_file
-      when:
-        - kubernetes_bootstrap_super_admin_stat.stat.exists
 
     - name: Write super-admin.conf to joining control-plane nodes
       ansible.builtin.copy:
@@ -59,8 +74,6 @@
         owner: root
         group: root
         mode: "0600"
-      when:
-        - kubernetes_bootstrap_super_admin_stat.stat.exists
 
 - name: Retrieve SHA256 certificate hash
   run_once: true
@@ -73,8 +86,15 @@
   run_once: true
   delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
   changed_when: true
-  ansible.builtin.shell: |
-    kubeadm token create
+  ansible.builtin.command:
+    argv:
+      - kubeadm
+      - token
+      - create
+      - --kubeconfig
+      - "{{ kubernetes_kubeadm_kubeconfig }}"
+      - --config
+      - /etc/kubernetes/kubeadm.yaml
   register: kubernetes_kubeadm_token_create
 
 - name: Upload kubeadm configuration
