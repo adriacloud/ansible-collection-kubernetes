@@ -93,8 +93,6 @@
           - apply
           - --kubeconfig
           - "{{ kubernetes_kubeadm_kubeconfig }}"
-          - --config
-          - /etc/kubernetes/kubeadm.yaml
           - --v=5
           - "--yes"
           - "v{{ kubernetes_version }}"
@@ -116,8 +114,6 @@
           - node
           - --kubeconfig
           - "{{ kubernetes_kubeadm_kubeconfig }}"
-          - --config
-          - /etc/kubernetes/kubeadm.yaml
       register: _kubernetes_trigger_upgrade
       until: _kubernetes_trigger_upgrade is not failed
       retries: 3

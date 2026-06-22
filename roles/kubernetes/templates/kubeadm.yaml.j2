@@ -72,7 +72,7 @@ nodeRegistration:
     - name: container-runtime-endpoint
       value: "{{ kubelet_cri_socket }}"
 {% endif %}
-{% if (kubernetes_bootstrap_node is not defined) or (kubernetes_bootstrap_node is defined and inventory_hostname != kubernetes_bootstrap_node) %}
+{% if inventory_hostname != kubernetes_bootstrap_node %}
 discovery:
   bootstrapToken:
     token: "{{ kubernetes_kubeadm_token_create.stdout | trim }}"

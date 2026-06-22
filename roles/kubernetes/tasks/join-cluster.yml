@@ -26,7 +26,7 @@
 
 - name: Check if super-admin.conf exists on bootstrap node
   run_once: true
-  delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
+  delegate_to: "{{ kubernetes_bootstrap_node }}"
   ansible.builtin.stat:
     path: /etc/kubernetes/super-admin.conf
   register: kubernetes_bootstrap_super_admin_stat
@@ -39,7 +39,7 @@
 
 - name: Generate control-plane certificates for joining cluster
   run_once: true
-  delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
+  delegate_to: "{{ kubernetes_bootstrap_node }}"
   ansible.builtin.command:
     argv:
       - kubeadm
@@ -62,7 +62,7 @@
     - kubernetes_bootstrap_super_admin_stat.stat.exists
   block:
     - name: Copy super-admin.conf from bootstrap node to joining control-plane nodes
-      delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
+      delegate_to: "{{ kubernetes_bootstrap_node }}"
       ansible.builtin.slurp:
         src: /etc/kubernetes/super-admin.conf
       register: kubernetes_super_admin_file
@@ -77,14 +77,14 @@
 
 - name: Retrieve SHA256 certificate hash
   run_once: true
-  delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
+  delegate_to: "{{ kubernetes_bootstrap_node  }}"
   community.crypto.x509_certificate_info:
     path: /etc/kubernetes/pki/ca.crt
   register: kubernetes_kubeadm_certificate_info
 
 - name: Generate token for joining cluster
   run_once: true
-  delegate_to: "{{ kubernetes_bootstrap_node | default(groups[kubernetes_control_plane_group][0]) }}"
+  delegate_to: "{{ kubernetes_bootstrap_node }}"
   changed_when: true
   ansible.builtin.command:
     argv:
