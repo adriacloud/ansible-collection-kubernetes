@@ -15,6 +15,9 @@
 # Kuberentes version
 kubernetes_version: 1.36.1
 
+# The host that will bootstrap the cluster
+kubernetes_bootstrap_node: "{{ groups[kubernetes_control_plane_group] | first }}"
+
 # Name of Ansible group containing all control-plane nodes
 kubernetes_control_plane_group: controllers
 
