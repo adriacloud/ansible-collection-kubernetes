@@ -13,6 +13,7 @@ This role is responsible for bootstrapping and managing a Kubernetes cluster usi
 | `kubernetes_non_init_namespace` | `{{ ansible_connection == 'community.docker.docker' }}` | If deployed in a container (docker/LXC), prevents `kube-proxy` from adjusting host conntrack settings. |
 | `kubernetes_coredns_node_selector` | `{"openstack-control-plane": "enabled"}` | Node selector mapping applied to the CoreDNS deployment. |
 | `kubernetes_allow_custom_ca` | `false` | Whether to upload and configure a custom set of CA certificates. |
+| `kubernetes_kube_vip_enabled` | `{{ kube_vip_enabled \| default(true) \| bool }}` | Whether to configure kube-vip on the joined control plane nodes. |
 | `kubernetes_node_ip` | `{{ kubelet_node_ip }}` | *Deprecated*. Use `kubelet_node_ip` instead. |
 | `kubernetes_cri_socket` | `{{ kubelet_cri_socket }}` | *Deprecated*. Use `kubelet_cri_socket` instead. |
 | `kubernetes_allow_unsafe_swap` | `false` | *Deprecated*. Use `kubelet_allow_unsafe_swap` instead. |

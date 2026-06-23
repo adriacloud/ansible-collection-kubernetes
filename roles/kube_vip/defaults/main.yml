@@ -13,7 +13,7 @@
 # under the License.
 
 # Enable kube-vip
-kube_vip_enabled: true
+kube_vip_enabled: "{{ kube_vip_interface is defined and kube_vip_address is defined }}"
 
 # Inventory group containing controllers
 kube_vip_control_plane_group: "{{ kubernetes_control_plane_group | default('controllers') }}"
