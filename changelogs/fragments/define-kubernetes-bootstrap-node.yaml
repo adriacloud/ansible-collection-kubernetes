@@ -1,6 +1,0 @@
----
-minor_changes:
-  - Variable `kubernetes_bootstrap_node` is now defined by default and is
-    set to the first host in the control-plane group by default.
-    Dynamic defenition based on presence of admin.conf on the target node
-    is removed.

@@ -2,21 +2,40 @@
 
 **Topics**
 
+- <a href="#v26-6-1">v26\.6\.1</a>
+    - <a href="#minor-changes">Minor Changes</a>
+    - <a href="#bugfixes">Bugfixes</a>
 - <a href="#v26-6-0">v26\.6\.0</a>
     - <a href="#release-summary">Release Summary</a>
-    - <a href="#minor-changes">Minor Changes</a>
+    - <a href="#minor-changes-1">Minor Changes</a>
     - <a href="#breaking-changes--porting-guide">Breaking Changes / Porting Guide</a>
     - <a href="#deprecated-features">Deprecated Features</a>
-    - <a href="#bugfixes">Bugfixes</a>
+    - <a href="#bugfixes-1">Bugfixes</a>
 - <a href="#v26-4-1">v26\.4\.1</a>
     - <a href="#major-changes">Major Changes</a>
-    - <a href="#minor-changes-1">Minor Changes</a>
-    - <a href="#breaking-changes--porting-guide-1">Breaking Changes / Porting Guide</a>
-    - <a href="#bugfixes-1">Bugfixes</a>
-- <a href="#v26-3-0">v26\.3\.0</a>
     - <a href="#minor-changes-2">Minor Changes</a>
-    - <a href="#deprecated-features-1">Deprecated Features</a>
+    - <a href="#breaking-changes--porting-guide-1">Breaking Changes / Porting Guide</a>
     - <a href="#bugfixes-2">Bugfixes</a>
+- <a href="#v26-3-0">v26\.3\.0</a>
+    - <a href="#minor-changes-3">Minor Changes</a>
+    - <a href="#deprecated-features-1">Deprecated Features</a>
+    - <a href="#bugfixes-3">Bugfixes</a>
+
+<a id="v26-6-1"></a>
+## v26\.6\.1
+
+<a id="minor-changes"></a>
+### Minor Changes
+
+* Add <em class="title-reference">kubernetes\_kube\_vip\_enabled</em> default variable to control whether <em class="title-reference">kube\-vip</em> is configured\.
+* The <em class="title-reference">kube\_vip\_enabled</em> is only set to true if <em class="title-reference">kube\_vip\_interface</em> and <em class="title-reference">kube\_vip\_address</em> are defined\.
+* Variable <em class="title-reference">kubernetes\_bootstrap\_node</em> is now defined by default and is set to the first host in the control\-plane group by default\. Dynamic defenition based on presence of admin\.conf on the target node is removed\.
+
+<a id="bugfixes"></a>
+### Bugfixes
+
+* Cluster init for kubernetes \>\=1\.36 when nodes has multiple interfaces and they are not using a default interface for communication\. As a fix we pass the \-\-config option to kubeadm command\. This is a generic expectation according to [https\://github\.com/kubernetes/kubeadm/issues/3313](https\://github\.com/kubernetes/kubeadm/issues/3313)
+* Dynamically load the <em class="title-reference">kube\_vip</em> role using <em class="title-reference">include\_role</em> instead of <em class="title-reference">import\_role</em> in <em class="title-reference">join\-cluster\.yml</em>\. This fixes configuration failures when <em class="title-reference">kube\-vip</em> is disabled/not deployed by avoiding the evaluation of undefined keepalived interface variables\.
 
 <a id="v26-6-0"></a>
 ## v26\.6\.0
@@ -26,7 +45,7 @@
 
 Default and supported versions of components were updated to latest available versions\. Versions for Helm\, kubeadm\, kubectl\, kubelet\, can now be set to an arbitrary ones\, without need to maintain a checksum matrix separately\.
 
-<a id="minor-changes"></a>
+<a id="minor-changes-1"></a>
 ### Minor Changes
 
 * Added support for cluster\-api version v1\.13\.2
@@ -54,7 +73,7 @@ Default and supported versions of components were updated to latest available ve
 
 * Kubernetes version 1\.33 is no longer tested and it\'s support is deprecated
 
-<a id="bugfixes"></a>
+<a id="bugfixes-1"></a>
 ### Bugfixes
 
 * Fixes a PIP installation conflict with PyYAML for k8s when virtualenv is not used\.
@@ -73,7 +92,7 @@ Default and supported versions of components were updated to latest available ve
 * Role <em class="title-reference">vexxhost\.containers\.download\_artifact</em> has been replaced with <em class="title-reference">adriacloud\.kubernetes\.download\_artifacts</em>\, which is included explicitly in tasks and can accept a list of artifacts for download\.
 * The <em class="title-reference">kubelet</em> role has incorporated logic for CRI and CNI deployment and configuration\. Please\, use variables <em class="title-reference">kubelet\_crictl\_version</em> and <em class="title-reference">kubelet\_cni\_plugins\_version</em> to define desired versions of tools\. If set to an empty string or null values\, deployment of tools will be skipped\.
 
-<a id="minor-changes-1"></a>
+<a id="minor-changes-2"></a>
 ### Minor Changes
 
 * Added role <em class="title-reference">adriacloud\.kubernetes\.containerd</em> which aims to replace the <em class="title-reference">vexxhost\.containers\.containerd</em> role in the future\. While it maintains simmilar set of features\, it has a series of significant differences\. The role does not mandate a list of supported runc/containerd versions\, and any valid version set could be used freely\.
@@ -91,7 +110,7 @@ Default and supported versions of components were updated to latest available ve
 
 * Role for <code>flux</code> deployment has been removed from the collection\. It was not required for a kubernetes deployment\, and goal of this collection is to perform a functional kubernetes cluster deployment\, while management tools for these kubernetes clusters are left out of the collection scope\.
 
-<a id="bugfixes-1"></a>
+<a id="bugfixes-2"></a>
 ### Bugfixes
 
 * Fixed collection publishing to Galaxy by adding README\.md to newly added roles\.
@@ -99,7 +118,7 @@ Default and supported versions of components were updated to latest available ve
 <a id="v26-3-0"></a>
 ## v26\.3\.0
 
-<a id="minor-changes-2"></a>
+<a id="minor-changes-3"></a>
 ### Minor Changes
 
 * Added support for CAPO versions 0\.13\.4 and 0\.14\.1
@@ -114,7 +133,7 @@ Default and supported versions of components were updated to latest available ve
 * Collection no longer cleans\-up components\, if they were installed from system packages\.
 * Support for Debian 12 has been deprecated
 
-<a id="bugfixes-2"></a>
+<a id="bugfixes-3"></a>
 ### Bugfixes
 
 * Ensured\, that proper python interpreter is used\, when ansible\_collection\_kubernetes\_target\_venv is defined\.

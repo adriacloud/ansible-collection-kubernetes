@@ -1,60 +1,6 @@
 ---
 ancestor: null
 releases:
-  26.6.0:
-    changes:
-      breaking_changes:
-        - Helm chart for cert-manager is now being deployed from the remote source
-          using `adriacloud.kubernetes.helm_deploy` role. You can override `cert_manager_helm_repo_url`
-          variable or `cert_manager_helm_charts` mapping as a whole to point to a
-          local mirror of the helm chart for offline deployments.
-        - Helm chart from cilium is now being deployed from the remote source using
-          `adriacloud.kubernetes.helm_deploy` role. You can override `cilium_helm_repo_url`
-          variable or `cilium_helm_charts` mapping as a whole to point to a local
-          mirror of the helm chart for offline deployments.
-      bugfixes:
-        - Fixes a PIP installation conflict with PyYAML for k8s when virtualenv is
-          not used.
-        - Fixes a race condition during control plane node joins where `kube-vip`
-          started up prematurely and bound the VIP address locally before `kubeadm
-          join` completed.
-        - Fixes authorization issues for `kube-vip` on secondary control plane nodes
-          in Kubernetes >= 1.29 by using `/etc/kubernetes/super-admin.conf` to bypass
-          RBAC during bootstrap.
-      deprecated_features:
-        - Kubernetes version 1.33 is no longer tested and it's support is deprecated
-      minor_changes:
-        - Added support for cluster-api version v1.13.2
-        - Added support for cluster-api-provider-openstack v0.14.4
-        - Added support for clusterctl version 1.13.2
-        - Added variables `cert_manager_helm_repo_url`, `cert_manager_cli_version`,
-          `cert_manager_tools_version`, and `cert_manager_helm_charts` to control
-          the Helm chart location and definition for Cilium.
-        - Added variables `cilium_helm_repo_url`, `cilium_version` and `cilium_helm_charts`
-          to control the Helm chart location and definition for Cilium.
-        - Default containerd version has been switched to 2.3.1
-        - Default haproxy version has been updated from 2.5 to 3.2
-        - Default version for OpenStack resource controller is set to 2.5.0
-        - Default version for cert-manager is set to 1.20.2
-        - Default version for cilium is set to 1.19.4
-        - Default version for crictl is set to 1.36.0
-        - Default version for kube-vip is set to 1.1.2
-        - Default version of kubernetes was changed to 1.36
-      release_summary:
-        Default and supported versions of components were updated to
-        latest available versions. Versions for Helm, kubeadm, kubectl, kubelet, can
-        now be set to an arbitrary ones, without need to maintain a checksum matrix
-        separately.
-    fragments:
-      - cert_manager_helm_chart.yaml
-      - cilium_helm_chart.yaml
-      - k8s_1.36.yaml
-      - kube-vip-join-fix.yaml
-      - pip-k8s-pyaml-conflict.yaml
-      - version_bump.yaml
-      - version_bump_p2.yaml
-      - version_bump_p3.yaml
-    release_date: "2026-06-08"
   26.3.0:
     changes:
       bugfixes:
@@ -74,7 +20,7 @@ releases:
       - ansible_core_2_19.yml
       - k8s_1_35.yml
       - no_forget_package.yml
-    release_date: "2026-03-11"
+    release_date: '2026-03-11'
   26.4.1:
     changes:
       breaking_changes:
@@ -138,4 +84,81 @@ releases:
       - no-docker-image-py.yaml
       - reduce-dependencies.yaml
       - upload-helm-chart-list.yaml
-    release_date: "2026-03-30"
+    release_date: '2026-03-30'
+  26.6.0:
+    changes:
+      breaking_changes:
+        - Helm chart for cert-manager is now being deployed from the remote source
+          using `adriacloud.kubernetes.helm_deploy` role. You can override `cert_manager_helm_repo_url`
+          variable or `cert_manager_helm_charts` mapping as a whole to point to a
+          local mirror of the helm chart for offline deployments.
+        - Helm chart from cilium is now being deployed from the remote source using
+          `adriacloud.kubernetes.helm_deploy` role. You can override `cilium_helm_repo_url`
+          variable or `cilium_helm_charts` mapping as a whole to point to a local
+          mirror of the helm chart for offline deployments.
+      bugfixes:
+        - Fixes a PIP installation conflict with PyYAML for k8s when virtualenv is
+          not used.
+        - Fixes a race condition during control plane node joins where `kube-vip`
+          started up prematurely and bound the VIP address locally before `kubeadm
+          join` completed.
+        - Fixes authorization issues for `kube-vip` on secondary control plane nodes
+          in Kubernetes >= 1.29 by using `/etc/kubernetes/super-admin.conf` to bypass
+          RBAC during bootstrap.
+      deprecated_features:
+        - Kubernetes version 1.33 is no longer tested and it's support is deprecated
+      minor_changes:
+        - Added support for cluster-api version v1.13.2
+        - Added support for cluster-api-provider-openstack v0.14.4
+        - Added support for clusterctl version 1.13.2
+        - Added variables `cert_manager_helm_repo_url`, `cert_manager_cli_version`,
+          `cert_manager_tools_version`, and `cert_manager_helm_charts` to control
+          the Helm chart location and definition for Cilium.
+        - Added variables `cilium_helm_repo_url`, `cilium_version` and `cilium_helm_charts`
+          to control the Helm chart location and definition for Cilium.
+        - Default containerd version has been switched to 2.3.1
+        - Default haproxy version has been updated from 2.5 to 3.2
+        - Default version for OpenStack resource controller is set to 2.5.0
+        - Default version for cert-manager is set to 1.20.2
+        - Default version for cilium is set to 1.19.4
+        - Default version for crictl is set to 1.36.0
+        - Default version for kube-vip is set to 1.1.2
+        - Default version of kubernetes was changed to 1.36
+      release_summary: Default and supported versions of components were updated to
+        latest available versions. Versions for Helm, kubeadm, kubectl, kubelet, can
+        now be set to an arbitrary ones, without need to maintain a checksum matrix
+        separately.
+    fragments:
+      - cert_manager_helm_chart.yaml
+      - cilium_helm_chart.yaml
+      - k8s_1.36.yaml
+      - kube-vip-join-fix.yaml
+      - pip-k8s-pyaml-conflict.yaml
+      - version_bump.yaml
+      - version_bump_p2.yaml
+      - version_bump_p3.yaml
+    release_date: '2026-06-08'
+  26.6.1:
+    changes:
+      bugfixes:
+        - Cluster init for kubernetes >=1.36 when nodes has multiple interfaces and
+          they are not using a default interface for communication. As a fix we pass
+          the --config option to kubeadm command. This is a generic expectation according
+          to https://github.com/kubernetes/kubeadm/issues/3313
+        - Dynamically load the `kube_vip` role using `include_role` instead of `import_role`
+          in `join-cluster.yml`. This fixes configuration failures when `kube-vip`
+          is disabled/not deployed by avoiding the evaluation of undefined keepalived
+          interface variables.
+      minor_changes:
+        - Add `kubernetes_kube_vip_enabled` default variable to control whether `kube-vip`
+          is configured.
+        - The `kube_vip_enabled` is only set to true if `kube_vip_interface` and `kube_vip_address`
+          are defined.
+        - Variable `kubernetes_bootstrap_node` is now defined by default and is set
+          to the first host in the control-plane group by default. Dynamic defenition
+          based on presence of admin.conf on the target node is removed.
+    fragments:
+      - define-kubernetes-bootstrap-node.yaml
+      - kube-vip-optional.yaml
+      - pass-kubeadm-config.yaml
+    release_date: '2026-06-23'
