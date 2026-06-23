@@ -85,3 +85,5 @@ kubernetes_distro_packages_install: >-
   }}
 
 kubernetes_distro_packages_remove: "{{ kubernetes_use_venv | ternary([], ['python3-yaml']) }}"
+
+kubernetes_kube_vip_enabled: "{{ kube_vip_enabled | default(true) }}"

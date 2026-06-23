@@ -116,5 +116,7 @@
     creates: /etc/kubernetes/kubelet.conf
 
 - name: Configure kube-vip on the joined control plane node
-  ansible.builtin.import_role:
+  ansible.builtin.include_role:
     name: adriacloud.kubernetes.kube_vip
+  when:
+    - kubernetes_kube_vip_enabled | bool

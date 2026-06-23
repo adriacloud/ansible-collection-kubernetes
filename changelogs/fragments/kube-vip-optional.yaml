@@ -1,0 +1,8 @@
+---
+minor_changes:
+  - Add `kubernetes_kube_vip_enabled` default variable to control whether `kube-vip` is configured.
+  - The `kube_vip_enabled` is only set to true if `kube_vip_interface` and `kube_vip_address` are defined.
+bugfixes:
+  - Dynamically load the `kube_vip` role using `include_role` instead of `import_role` in `join-cluster.yml`.
+    This fixes configuration failures when `kube-vip` is disabled/not deployed by avoiding the evaluation of
+    undefined keepalived interface variables.
